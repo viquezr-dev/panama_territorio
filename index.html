@@ -468,21 +468,25 @@ const csvPaths = {
         const provSelect = document.getElementById('filtro-provincia');
         if (!provSelect) return;
         
-        // Si ya tiene cargadas las provincias, no las volvemos a duplicar
+        // Si ya tiene cargadas las provincias (más de la opción "Todos"), salimos para no duplicar
         if (provSelect.options.length > 1) return;
     
         if (cacheDatos['provincia']) {
-            // Obtener provincias únicas limpias
-            const provs = [...new Set(cacheDatos['provincia'].map(r => JSON.stringify({id: r.PROV_ID, nomb: r.PROV_NOMB})))].map(s => JSON.parse(s));
+            // Mapeamos asegurando limpiar cualquier espacio en blanco invisible de los datos (.trim())
+            const provs = [...new Set(cacheDatos['provincia']
+                .filter(r => r.PROV_ID && r.PROV_NOMB)
+                .map(r => JSON.stringify({
+                    id: String(r.PROV_ID).trim(), 
+                    nomb: String(r.PROV_NOMB).trim()
+                })))
+            ].map(s => JSON.parse(s));
             
-            // 1. ORDENAR ASCENDENTE POR ID (Para que respete 01, 02, 03...)
-            provs.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+            // ORDENAR ASCENDENTE ESTRICTO POR ID (01, 02, 03... al abrir la página)
+            provs.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' }));
             
-            // 2. LLENAR SELECTOR: Guarda el ID internamente pero muestra SOLO el Nombre
+            // Llenar el selector mostrando solo el nombre
             provs.forEach(p => {
-                if(p.id && p.nomb) {
-                    provSelect.options.add(new Option(p.nomb, p.id));
-                }
+                provSelect.options.add(new Option(p.nomb, p.id));
             });
         }
     }
