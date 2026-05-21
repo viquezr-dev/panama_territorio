@@ -245,6 +245,13 @@
             Secciona el nivel territorial requerido. Las opciones de filtrado se actualizarán en cascada de acuerdo a tu selección jerárquica.
         </div>
 
+        <div id="leyenda-poblados" class="descripcion-box" style="display: none; background: #e0f2fe; border: 1px solid #bae6fd; color: #0369a1;">
+            <strong>📋 Descripción del Patrón para Poblados:</strong><br>
+            <span style="margin-right: 15px;"><strong>🔹 LUPO_CLASE:</strong> 1-CABECERA, 2-POBLADO COMPLETO, 3-POBLADO PARTE, 4-CABECERA PARTE (Mixto)</span><br>
+            <span style="margin-right: 15px;"><strong>🔍 LUPO_TIPO:</strong> 1-URBANO, 2-RURAL, 3-INDIGENA</span><br>
+            <span><strong>🔍 LUPO_CATE:</strong> 1-POBLADO, 2-SITIO</span>
+        </div>
+        
         <div class="toolbar">
             <div class="nivel-section">
                 <div class="selector-nivel">
@@ -390,7 +397,7 @@ const csvPaths = {
         document.getElementById('div-filtro-dist').style.display = ['corregimientos', 'poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
         document.getElementById('div-filtro-corr').style.display = ['poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
         document.getElementById('div-filtro-lupo').style.display = nuevoNivel === 'barrios' ? 'block' : 'none';
-    
+        document.getElementById('leyenda-poblados').style.display = nuevoNivel === 'poblados' ? 'block' : 'none';
         cargarNivelTerritorial(nuevoNivel);
     }
     
