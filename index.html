@@ -477,54 +477,65 @@ const csvPaths = {
     
     function filtrarCascada(tipoFiltro) {
         const pVal = document.getElementById('filtro-provincia').value;
+        const dVal = document.getElementById('filtro-distrito').value;
+        const cVal = document.getElementById('filtro-corregimiento').value;
         
         if (tipoFiltro === 'provincia') {
             rebuildSelect('filtro-distrito');
             rebuildSelect('filtro-corregimiento');
             rebuildSelect('filtro-poblado');
+            rebuildSelect('filtro-barrio'); // Asegurar limpiar barrios también
             
             if (pVal && cacheDatos['distritos']) {
                 const distSelect = document.getElementById('filtro-distrito');
                 const filtrados = cacheDatos['distritos'].filter(r => r.PROV_ID === pVal);
-                const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.DIST_ID, nomb: r.DIST_NOMB})))];
-                unicos.forEach(dStr => {
-                    const d = JSON.parse(dStr);
-                    distSelect.options.add(new Option(d.nomb, d.id));
-                });
+                const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.DIST_ID, nomb: r.DIST_NOMB})))].map(s => JSON.parse(s));
+                
+                unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+                unicos.forEach(d => distSelect.options.add(new Option(`${d.id} - ${d.nomb}`, d.id)));
             }
         } 
         else if (tipoFiltro === 'distrito') {
             rebuildSelect('filtro-corregimiento');
             rebuildSelect('filtro-poblado');
-            const dVal = document.getElementById('filtro-distrito').value;
+            rebuildSelect('filtro-barrio');
             
             if (pVal && dVal && cacheDatos['corregimientos']) {
                 const corrSelect = document.getElementById('filtro-corregimiento');
                 const filtrados = cacheDatos['corregimientos'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal);
-                const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.CORR_ID, nomb: r.CORR_NOMB})))];
-                unicos.forEach(cStr => {
-                    const c = JSON.parse(cStr);
-                    corrSelect.options.add(new Option(c.nomb, c.id));
-                });
+                const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.CORR_ID, nomb: r.CORR_NOMB})))].map(s => JSON.parse(s));
+                
+                unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+                unicos.forEach(c => corrSelect.options.add(new Option(`${c.id} - ${c.nomb}`, c.id)));
             }
         }
         else if (tipoFiltro === 'corregimiento') {
             rebuildSelect('filtro-poblado');
-            const dVal = document.getElementById('filtro-distrito').value;
-            const cVal = document.getElementById('filtro-corregimiento').value;
+            rebuildSelect('filtro-barrio');
     
+            // 1. Llenar Poblados
             if (pVal && dVal && cVal && cacheDatos['poblados']) {
                 const lupoSelect = document.getElementById('filtro-poblado');
                 const filtrados = cacheDatos['poblados'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal && r.CORR_ID === cVal);
-                const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.LUPO_ID, nomb: r.LUPO_NOMB})))];
-                unicos.forEach(lStr => {
-                    const l = JSON.parse(lStr);
-                    lupoSelect.options.add(new Option(l.nomb, l.id));
-                });
+                const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.LUPO_ID, nomb: r.LUPO_NOMB})))].map(s => JSON.parse(s));
+                
+                unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+                unicos.forEach(l => lupoSelect.options.add(new Option(`${l.id} - ${l.nomb}`, l.id)));
+            }
+    
+            // 2. NUEVO: Llenar Barrios al seleccionar el Corregimiento (Jerarquía correspondiente)
+            if (pVal && dVal && cVal && cacheDatos['barrios']) {
+                const barrSelect = document.getElementById('filtro-barrio');
+                const filtrados = cacheDatos['barrios'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal && r.CORR_ID === cVal);
+                const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.BARR_ID, nomb: r.BARR_NOMB})))].map(s => JSON.parse(s));
+                
+                unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+                unicos.forEach(b => barrSelect.options.add(new Option(`${b.id} - ${b.nomb}`, b.id)));
             }
         }
     
-        const nivelesAsegurar = ['distritos', 'corregimientos', 'poblados'];
+        // Asegurar precarga de archivos en segundo plano si no existen
+        const nivelesAsegurar = ['distritos', 'corregimientos', 'poblados', 'barrios'];
         nivelesAsegurar.forEach(n => {
             if(!cacheDatos[n]) {
                 Papa.parse(csvPaths[n], {
@@ -562,6 +573,7 @@ const csvPaths = {
         rebuildSelect('filtro-distrito');
         rebuildSelect('filtro-corregimiento');
         rebuildSelect('filtro-poblado');
+        rebuildSelect('filtro-barrio'); // Agregado para limpiar completamente
         document.getElementById('search-input').value = "";
         aplicarFiltrosYRenderizar();
     }
