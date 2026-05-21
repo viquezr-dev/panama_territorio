@@ -465,12 +465,24 @@ const csvPaths = {
     }
     
     function actualizarSelectoresFiltros() {
-        if (cacheDatos['provincia'] && document.getElementById('filtro-provincia').options.length <= 1) {
-            const provSelect = document.getElementById('filtro-provincia');
-            const provs = [...new Set(cacheDatos['provincia'].map(r => JSON.stringify({id: r.PROV_ID, nomb: r.PROV_NOMB})))];
-            provs.forEach(pStr => {
-                const p = JSON.parse(pStr);
-                if(p.id) provSelect.options.add(new Option(p.nomb, p.id));
+        const provSelect = document.getElementById('filtro-provincia');
+        if (!provSelect) return;
+        
+        // Si ya tiene cargadas las provincias, no las volvemos a duplicar
+        if (provSelect.options.length > 1) return;
+    
+        if (cacheDatos['provincia']) {
+            // Obtener provincias únicas limpias
+            const provs = [...new Set(cacheDatos['provincia'].map(r => JSON.stringify({id: r.PROV_ID, nomb: r.PROV_NOMB})))].map(s => JSON.parse(s));
+            
+            // 1. ORDENAR ASCENDENTE POR ID (Para que respete 01, 02, 03...)
+            provs.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+            
+            // 2. LLENAR SELECTOR: Guarda el ID internamente pero muestra SOLO el Nombre
+            provs.forEach(p => {
+                if(p.id && p.nomb) {
+                    provSelect.options.add(new Option(p.nomb, p.id));
+                }
             });
         }
     }
