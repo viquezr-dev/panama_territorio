@@ -304,284 +304,276 @@
     </div>
 
     <script>
-        // Configuración de rutas de archivos CSV relativos (Para GitHub Pages)
-        const csvPaths = {
-            provincia: './data/provincias.csv',
-            distritos: './data/distritos.csv',
-            corregimientos: './data/corregimientos.csv',
-            poblados: './data/poblados.csv',
-            barrios: './data/barrios.csv'
-        };
+       // Configuración de rutas de archivos CSV relativos (Para GitHub Pages)
+const csvPaths = {
+    provincia: './data/provincias.csv',
+    distritos: './data/distritos.csv',
+    corregimientos: './data/corregimientos.csv',
+    poblados: './data/poblados.csv',
+    barrios: './data/barrios.csv'
+};
 
-        // Mapeo estricto de campos solicitados por nivel
-        const estructurasDeCampos = {
-            provincia: ['PROV_ID', 'PROV_NOMB', 'SHAPE_Leng', 'SHAPE_Area'],
-            distritos: ['PROV_ID', 'DIST_ID', 'DIST_NOMB', 'SHAPE_Leng', 'SHAPE_Area', 'DIST_CODE'],
-            corregimientos: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'CODIGO', 'CORR_NOMB', 'CORR_CATE', 'DESCRIP_ON'],
-            poblados: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'CODIGO', 'LUPO_NOMB', 'LUPO_CLASE', 'DESCRIP_ON', 'LUPO_CATE', 'LUPO_TIPO'],
-            barrios: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'BARR_ID', 'CODIGO', 'BARR_NOMB', 'BARR_CLASE', 'DESCRIP_ON']
-        };
-
-        // Estado global de la aplicación de datos en memoria
-        let cacheDatos = {};
-        let nivelActivo = 'provincia';
-        let datosFiltrados = [];
-        let ordenAscendente = true;
-
-        // Al iniciar, cargar el primer nivel
-        window.addEventListener('DOMContentLoaded', () => {
-            cargarNivelTerritorial(nivelActivo);
-        });
-
-        function cargarNivelTerritorial(nivel) {
-            document.getElementById('contador-registros').innerText = "Cargando datos desde el servidor...";
-            
-            if (cacheDatos[nivel]) {
+    // Estructura de campos por nivel territorial (Corregido sin espacios)
+    const estructurasDeCampos = {
+        provincia: ['PROV_ID', 'PROV_NOMB', 'SHAPE_Leng', 'SHAPE_Area'],
+        distritos: ['PROV_ID', 'DIST_ID', 'DIST_NOMB', 'SHAPE_Leng', 'SHAPE_Area', 'DIST_CODE'],
+        corregimientos: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'CODIGO', 'CORR_NOMB', 'CORR_CATE', 'DESCRIP_ON'],
+        poblados: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'CODIGO', 'LUPO_NOMB', 'LUPO_CLASE', 'DESCRIP_ON', 'LUPO_CATE', 'LUPO_TIPO'],
+        barrios: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'BARR_ID', 'CODIGO', 'BARR_NOMB', 'BARR_CLASE', 'DESCRIP_ON']
+    };
+    
+    // Estado global de la aplicación
+    let cacheDatos = {};
+    let nivelActivo = 'provincia';
+    let datosFiltrados = [];
+    let ordenAscendente = true;
+    
+    // Al iniciar, cargar el primer nivel
+    window.addEventListener('DOMContentLoaded', () => {
+        cargarNivelTerritorial(nivelActivo);
+    });
+    
+    function cargarNivelTerritorial(nivel) {
+        document.getElementById('contador-registros').innerText = "Cargando datos desde el servidor...";
+        
+        if (cacheDatos[nivel]) {
+            procesarYMostrar(nivel);
+            return;
+        }
+    
+        Papa.parse(csvPaths[nivel], {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            complete: function(results) {
+                cacheDatos[nivel] = results.data;
                 procesarYMostrar(nivel);
-                return;
+                actualizarSelectoresFiltros();
+            },
+            error: function(err) {
+                document.getElementById('contador-registros').innerText = "Error al cargar el archivo CSV de: " + nivel;
+                console.error(err);
             }
-
-            Papa.parse(csvPaths[nivel], {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    cacheDatos[nivel] = results.data;
-                    procesarYMostrar(nivel);
-                    actualizarSelectoresFiltros();
-                },
-                error: function(err) {
-                    document.getElementById('contador-registros').innerText = "Error al cargar el archivo CSV de: " + nivel;
-                    console.error(err);
-                }
+        });
+    }
+    
+    function procesarYMostrar(nivel) {
+        datosFiltrados = [...cacheDatos[nivel]];
+        generarCabecera(nivel);
+        aplicarFiltrosYRenderizar();
+    }
+    
+    function generarCabecera(nivel) {
+        const head = document.getElementById('tabla-head');
+        const campos = estructurasDeCampos[nivel];
+        let html = '<tr>';
+        campos.forEach((campo) => {
+            html += `<th onclick="ordenarTabla('${campo}')">${campo} <span id="sort-${campo}"></span></th>`;
+        });
+        html += '</tr>';
+        head.innerHTML = html;
+    }
+    
+    function cambiarNivel(nuevoNivel) {
+        nivelActivo = nuevoNivel;
+        
+        const botones = document.querySelectorAll('.btn-nivel');
+        const mapeoIndices = { provincia: 0, distritos: 1, corregimientos: 2, poblados: 3, barrios: 4 };
+        
+        botones.forEach(b => b.classList.remove('active'));
+        if (mapeoIndices[nuevoNivel] !== undefined) {
+            botones[mapeoIndices[nuevoNivel]].classList.add('active');
+        }
+    
+        // Mostrar/Ocultar selectores condicionales según nivel jerárquico elegido
+        document.getElementById('div-filtro-prov').style.display = nuevoNivel !== 'provincia' ? 'block' : 'none';
+        document.getElementById('div-filtro-dist').style.display = ['corregimientos', 'poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
+        document.getElementById('div-filtro-corr').style.display = ['poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
+        document.getElementById('div-filtro-lupo').style.display = nuevoNivel === 'barrios' ? 'block' : 'none';
+    
+        cargarNivelTerritorial(nuevoNivel);
+    }
+    
+    function aplicarFiltrosYRenderizar() {
+        let baseDatos = cacheDatos[nivelActivo] ? [...cacheDatos[nivelActivo]] : [];
+    
+        const pVal = document.getElementById('filtro-provincia').value;
+        const dVal = document.getElementById('filtro-distrito').value;
+        const cVal = document.getElementById('filtro-corregimiento').value;
+        const lVal = document.getElementById('filtro-poblado').value;
+    
+        // Filtrado Jerárquico en Cascada
+        if (pVal && nivelActivo !== 'provincia') {
+            baseDatos = baseDatos.filter(r => r.PROV_ID === pVal);
+        }
+        if (dVal && ['corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
+            baseDatos = baseDatos.filter(r => r.DIST_ID === dVal);
+        }
+        if (cVal && ['poblados', 'barrios'].includes(nivelActivo)) {
+            baseDatos = baseDatos.filter(r => r.CORR_ID === cVal);
+        }
+        if (lVal && nivelActivo === 'barrios') {
+            baseDatos = baseDatos.filter(r => r.LUPO_ID === lVal);
+        }
+    
+        // Filtrado por barra de búsqueda global
+        const busqueda = document.getElementById('search-input').value.toLowerCase().trim();
+        if (busqueda !== "") {
+            const campos = estructurasDeCampos[nivelActivo];
+            baseDatos = baseDatos.filter(fila => {
+                return campos.some(campo => String(fila[campo] || '').toLowerCase().includes(busqueda));
             });
         }
-
-        function procesarYMostrar(nivel) {
-            datosFiltrados = [...cacheDatos[nivel]];
-            generarCabecera(nivel);
-            aplicarFiltrosYRenderizar();
+    
+        datosFiltrados = baseDatos;
+        renderizarTabla();
+    }
+    
+    function renderizarTabla() {
+        const tbody = document.getElementById('tabla-body');
+        const campos = estructurasDeCampos[nivelActivo];
+        
+        if (datosFiltrados.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="${campos.length}" style="text-align:center; padding:30px; color:#999;">No se encontraron registros.</td></tr>`;
+            document.getElementById('contador-registros').innerText = "Mostrando 0 registros";
+            return;
         }
-
-        function generarCabecera(nivel) {
-            const head = document.getElementById('tabla-head');
-            const campos = estructurasDeCampos[nivel];
-            let html = '<tr>';
-            campos.forEach((campo, index) => {
-                html += `<th onclick="ordenarTabla('${campo}')">${campo} <span id="sort-${campo}"></span></th>`;
+    
+        let html = '';
+        datosFiltrados.forEach(fila => {
+            html += '<tr>';
+            campos.forEach(campo => {
+                html += `<td>${fila[campo] || ''}</td>`;
             });
             html += '</tr>';
-            head.innerHTML = html;
-        }
-
-        function cambiarNivel(nuevoNivel) {
-            nivelActivo = nuevoNivel;
-            
-            // Actualizar diseño de botones de pestañas
-            document.querySelectorAll('.btn-nivel').forEach(btn => {
-                btn.classList.remove('active');
-                if(btn.innerText.toLowerCase() === nuevoNivel) btn.classList.add('active');
+        });
+        
+        tbody.innerHTML = html;
+        document.getElementById('contador-registros').innerText = `Mostrando ${datosFiltrados.length} registros`;
+    }
+    
+    function filtrarTabla() {
+        aplicarFiltrosYRenderizar();
+    }
+    
+    function actualizarSelectoresFiltros() {
+        if (cacheDatos['provincia'] && document.getElementById('filtro-provincia').options.length <= 1) {
+            const provSelect = document.getElementById('filtro-provincia');
+            const provs = [...new Set(cacheDatos['provincia'].map(r => JSON.stringify({id: r.PROV_ID, nomb: r.PROV_NOMB})))];
+            provs.forEach(pStr => {
+                const p = JSON.parse(pStr);
+                if(p.id) provSelect.options.add(new Option(p.nomb, p.id));
             });
-            // Ajustar para corregimientos/poblados/distritos que varían en texto de botón
-            const botones = document.querySelectorAll('.btn-nivel');
-            const mapeoIndices = { provincia: 0, distritos: 1, corregimientos: 2, poblados: 3, barrios: 4 };
-            botones.forEach(b => b.classList.remove('active'));
-            botones[mapeoIndices[nuevoNivel]].classList.add('active');
-
-            // Mostrar/Ocultar selectores condicionales según nivel jerárquico elegido
-            document.getElementById('div-filtro-prov').style.display = nuevoNivel !== 'provincia' ? 'block' : 'none';
-            document.getElementById('div-filtro-dist').style.display = ['corregimientos', 'poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
-            document.getElementById('div-filtro-corr').style.display = ['poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
-            document.getElementById('div-filtro-lupo').style.display = nuevoNivel === 'barrios' ? 'block' : 'none';
-
-            cargarNivelTerritorial(nuevoNivel);
         }
-
-        function aplicarFiltrosYRenderizar() {
-            let baseDatos = cacheDatos[nivelActivo] ? [...cacheDatos[nivelActivo]] : [];
-
-            const pVal = document.getElementById('filtro-provincia').value;
-            const dVal = document.getElementById('filtro-distrito').value;
-            const cVal = document.getElementById('filtro-corregimiento').value;
-            const lVal = document.getElementById('filtro-poblado').value;
-
-            // Filtrado Jerárquico en Cascada
-            if (pVal && nivelActivo !== 'provincia') {
-                baseDatos = baseDatos.filter(r => r.PROV_ID === pVal);
-            }
-            if (dVal && ['corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
-                baseDatos = baseDatos.filter(r => r.DIST_ID === dVal);
-            }
-            if (cVal && ['poblados', 'barrios'].includes(nivelActivo)) {
-                baseDatos = baseDatos.filter(r => r.CORR_ID === cVal);
-            }
-            if (lVal && nivelActivo === 'barrios') {
-                baseDatos = baseDatos.filter(r => r.LUPO_ID === lVal);
-            }
-
-            // Filtrado por barra de búsqueda global
-            const busqueda = document.getElementById('search-input').value.toLowerCase().trim();
-            if (busqueda !== "") {
-                const campos = estructurasDeCampos[nivelActivo];
-                baseDatos = baseDatos.filter(fila => {
-                    return campos.some(campo => String(fila[campo]).toLowerCase().includes(busqueda));
-                });
-            }
-
-            datosFiltrados = baseDatos;
-            renderizarTabla();
-        }
-
-        function renderizarTabla() {
-            const tbody = document.getElementById('tabla-body');
-            const campos = estructurasDeCampos[nivelActivo];
-            
-            if (datosFiltrados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${campos.length}" style="text-align:center; padding:30px; color:#999;">No se encontraron registros con las condiciones especificadas.</td></tr>`;
-                document.getElementById('contador-registros').innerText = "Mostrando 0 registros";
-                return;
-            }
-
-            let html = '';
-            datosFiltrados.forEach(fila => {
-                html += 'tr>';
-                campos.forEach(campo => {
-                    html += `<td>${fila[campo] || ''}</td>`;
-                });
-                html += '</tr>';
-            });
-            
-            tbody.innerHTML = html;
-            document.getElementById('contador-registros').innerText = `Mostrando ${datosFiltrados.length} registros`;
-        }
-
-        function filtrarTabla() {
-            aplicarFiltrosYRenderizar();
-        }
-
-        // Carga dinámica de los Selectores de Filtro utilizando Provincias como pivote
-        function actualizarSelectoresFiltros() {
-            // Si ya cargamos provincias en caché, poblar select de provincias
-            if (cacheDatos['provincia'] && document.getElementById('filtro-provincia').options.length <= 1) {
-                const provSelect = document.getElementById('filtro-provincia');
-                const provs = [...new Set(cacheDatos['provincia'].map(r => JSON.stringify({id: r.PROV_ID, nomb: r.PROV_NOMB})))];
-                provs.forEach(pStr => {
-                    const p = JSON.parse(pStr);
-                    if(p.id) provSelect.options.add(new Option(p.nomb, p.id));
-                });
-            }
-        }
-
-        function filtrarCascada(tipoFiltro) {
-            const pVal = document.getElementById('filtro-provincia').value;
-            
-            if (tipoFiltro === 'provincia') {
-                // Reiniciar hijos
-                rebuildSelect('filtro-distrito');
-                rebuildSelect('filtro-corregimiento');
-                rebuildSelect('filtro-poblado');
-                
-                if (pVal && cacheDatos['distritos']) {
-                    const distSelect = document.getElementById('filtro-distrito');
-                    const filtrados = cacheDatos['distritos'].filter(r => r.PROV_ID === pVal);
-                    const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.DIST_ID, nomb: r.DIST_NOMB})))];
-                    unicos.forEach(dStr => {
-                        const d = JSON.parse(dStr);
-                        distSelect.options.add(new Option(d.nomb, d.id));
-                    });
-                }
-            } 
-            else if (tipoFiltro === 'distrito') {
-                rebuildSelect('filtro-corregimiento');
-                rebuildSelect('filtro-poblado');
-                const dVal = document.getElementById('filtro-distrito').value;
-                
-                if (pVal && dVal && cacheDatos['corregimientos']) {
-                    const corrSelect = document.getElementById('filtro-corregimiento');
-                    const filtrados = cacheDatos['corregimientos'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal);
-                    const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.CORR_ID, nomb: r.CORR_NOMB})))];
-                    unicos.forEach(cStr => {
-                        const c = JSON.parse(cStr);
-                        corrSelect.options.add(new Option(c.nomb, c.id));
-                    });
-                }
-            }
-            else if (tipoFiltro === 'corregimiento') {
-                rebuildSelect('filtro-poblado');
-                const dVal = document.getElementById('filtro-distrito').value;
-                const cVal = document.getElementById('filtro-corregimiento').value;
-
-                if (pVal && dVal && cVal && cacheDatos['poblados']) {
-                    const lupoSelect = document.getElementById('filtro-poblado');
-                    const filtrados = cacheDatos['poblados'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal && r.CORR_ID === cVal);
-                    const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.LUPO_ID, nomb: r.LUPO_NOMB})))];
-                    unicos.forEach(lStr => {
-                        const l = JSON.parse(lStr);
-                        lupoSelect.options.add(new Option(l.nomb, l.id));
-                    });
-                }
-            }
-
-            // Asegurar la precarga preventiva de tablas hijas para que funcionen los filtros cruzados
-            const nivelesAsegurar = ['distritos', 'corregimientos', 'poblados'];
-            nivelesAsegurar.forEach(n => {
-                if(!cacheDatos[n]) {
-                    Papa.parse(csvPaths[n], {
-                        download: true, header: true, skipEmptyLines: true,
-                        complete: (res) => { cacheDatos[n] = res.data; actualizarSelectoresFiltros(); }
-                    });
-                }
-            });
-
-            aplicarFiltrosYRenderizar();
-        }
-
-        function rebuildSelect(id) {
-            const sel = document.getElementById(id);
-            sel.innerHTML = `<option value="">${id.includes('dist') ? 'Todos' : id.includes('corr') ? 'Todos' : 'Todos'}</option>`;
-        }
-
-        function ordenarTabla(campo) {
-            ordenAscendente = !ordenAscendente;
-            datosFiltrados.sort((a, b) => {
-                let valA = String(a[campo] || '').toLowerCase();
-                let valB = String(b[campo] || '').toLowerCase();
-                
-                // Si son números, ordenar numéricamente
-                if (!isNaN(valA) && !isNaN(valB) && valA !== '' && valB !== '') {
-                    return ordenAscendente ? valA - valB : valB - valA;
-                }
-                
-                return ordenAscendente ? valA.localeCompare(valB) : valB.localeCompare(valA);
-            });
-            renderizarTabla();
-        }
-
-        function limpiarFiltros() {
-            document.getElementById('filtro-provincia').value = "";
+    }
+    
+    function filtrarCascada(tipoFiltro) {
+        const pVal = document.getElementById('filtro-provincia').value;
+        
+        if (tipoFiltro === 'provincia') {
             rebuildSelect('filtro-distrito');
             rebuildSelect('filtro-corregimiento');
             rebuildSelect('filtro-poblado');
-            document.getElementById('search-input').value = "";
-            aplicarFiltrosYRenderizar();
-        }
-
-        function exportarCSV() {
-            if(datosFiltrados.length === 0) return;
-            const campos = estructurasDeCampos[nivelActivo];
-            const csvContent = Papa.unparse({
-                fields: campos,
-                data: datosFiltrados
-            });
             
-            const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", `exportacion_${nivelActivo}_panama.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            if (pVal && cacheDatos['distritos']) {
+                const distSelect = document.getElementById('filtro-distrito');
+                const filtrados = cacheDatos['distritos'].filter(r => r.PROV_ID === pVal);
+                const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.DIST_ID, nomb: r.DIST_NOMB})))];
+                unicos.forEach(dStr => {
+                    const d = JSON.parse(dStr);
+                    distSelect.options.add(new Option(d.nomb, d.id));
+                });
+            }
+        } 
+        else if (tipoFiltro === 'distrito') {
+            rebuildSelect('filtro-corregimiento');
+            rebuildSelect('filtro-poblado');
+            const dVal = document.getElementById('filtro-distrito').value;
+            
+            if (pVal && dVal && cacheDatos['corregimientos']) {
+                const corrSelect = document.getElementById('filtro-corregimiento');
+                const filtrados = cacheDatos['corregimientos'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal);
+                const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.CORR_ID, nomb: r.CORR_NOMB})))];
+                unicos.forEach(cStr => {
+                    const c = JSON.parse(cStr);
+                    corrSelect.options.add(new Option(c.nomb, c.id));
+                });
+            }
         }
+        else if (tipoFiltro === 'corregimiento') {
+            rebuildSelect('filtro-poblado');
+            const dVal = document.getElementById('filtro-distrito').value;
+            const cVal = document.getElementById('filtro-corregimiento').value;
+    
+            if (pVal && dVal && cVal && cacheDatos['poblados']) {
+                const lupoSelect = document.getElementById('filtro-poblado');
+                const filtrados = cacheDatos['poblados'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal && r.CORR_ID === cVal);
+                const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.LUPO_ID, nomb: r.LUPO_NOMB})))];
+                unicos.forEach(lStr => {
+                    const l = JSON.parse(lStr);
+                    lupoSelect.options.add(new Option(l.nomb, l.id));
+                });
+            }
+        }
+    
+        const nivelesAsegurar = ['distritos', 'corregimientos', 'poblados'];
+        nivelesAsegurar.forEach(n => {
+            if(!cacheDatos[n]) {
+                Papa.parse(csvPaths[n], {
+                    download: true, header: true, skipEmptyLines: true,
+                    complete: (res) => { cacheDatos[n] = res.data; actualizarSelectoresFiltros(); }
+                });
+            }
+        });
+    
+        aplicarFiltrosYRenderizar();
+    }
+    
+    function rebuildSelect(id) {
+        const sel = document.getElementById(id);
+        sel.innerHTML = '<option value="">Todos</option>';
+    }
+    
+    function ordenarTabla(campo) {
+        ordenAscendente = !ordenAscendente;
+        datosFiltrados.sort((a, b) => {
+            let valA = String(a[campo] || '').toLowerCase();
+            let valB = String(b[campo] || '').toLowerCase();
+            
+            if (!isNaN(valA) && !isNaN(valB) && valA !== '' && valB !== '') {
+                return ordenAscendente ? valA - valB : valB - valA;
+            }
+            
+            return ordenAscendente ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        });
+        renderizarTabla();
+    }
+    
+    function limpiarFiltros() {
+        document.getElementById('filtro-provincia').value = "";
+        rebuildSelect('filtro-distrito');
+        rebuildSelect('filtro-corregimiento');
+        rebuildSelect('filtro-poblado');
+        document.getElementById('search-input').value = "";
+        aplicarFiltrosYRenderizar();
+    }
+    
+    function exportarCSV() {
+        if(datosFiltrados.length === 0) return;
+        const campos = estructurasDeCampos[nivelActivo];
+        const csvContent = Papa.unparse({
+            fields: campos,
+            data: datosFiltrados
+        });
+        
+        const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute("download", `exportacion_${nivelActivo}_panama.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
     </script>
 </body>
 </html>
