@@ -440,17 +440,18 @@ const csvPaths = {
         }
     
         let html = '';
-        datosFiltrados.forEach(fila => {
-            html += '<tr>';
-            campos.forEach(campo => {
-                html += `<td>${fila[campo] || ''}</td>`;
-            });
-            html += '</tr>';
-        });
+    datosFiltrados.forEach(fila => {
         
-        tbody.innerHTML = html;
-        document.getElementById('contador-registros').innerText = `Mostrando ${datosFiltrados.length} registros`;
-    }
+        html += '<tr>'; 
+        campos.forEach(campo => {
+            html += `<td>${fila[campo] || ''}</td>`;
+        });
+        html += '</tr>';
+    });
+    
+    tbody.innerHTML = html;
+    document.getElementById('contador-registros').innerText = `Mostrando ${datosFiltrados.length} registros`;
+}
     
     function filtrarTabla() {
         aplicarFiltrosYRenderizar();
