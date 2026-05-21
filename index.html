@@ -365,7 +365,18 @@ const csvPaths = {
     }
     
     function procesarYMostrar(nivel) {
+        // Almacenar copia de los datos cargados
         datosFiltrados = [...cacheDatos[nivel]];
+        
+        // Si entramos a provincias, forzar el orden ascendente numérico de una vez
+        if (nivel === 'provincia') {
+            datosFiltrados.sort((a, b) => {
+                let idA = String(a.PROV_ID || '').trim();
+                let idB = String(b.PROV_ID || '').trim();
+                return idA.localeCompare(idB, undefined, { numeric: true });
+            });
+        }
+    
         generarCabecera(nivel);
         aplicarFiltrosYRenderizar();
     }
