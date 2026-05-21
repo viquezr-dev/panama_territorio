@@ -1,170 +1,587 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <title>Visualizador Geográfico de Panamá</title>
     <meta charset="UTF-8">
-    <title>Visualizador UPM - Panamá</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- PapaParse para procesar los archivos CSV de forma eficiente -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
-        body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        #map { height: 100vh; width: 100%; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f0f4e8 0%, #ffe6e6 100%);
+            color: #4a4a4a;
+            font-size: 14px;
+            min-height: 100vh;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.95);
+            padding: 15px 25px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo-placeholder {
+            width: 50px;
+            height: 50px;
+            background: #6b5b95;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        .credits {
+            text-align: right;
+            font-size: 12px;
+            color: #7a7a7a;
+        }
+        .credits a {
+            color: #6b5b95;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 95%;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #6b5b95;
+            text-align: center;
+            border-bottom: 3px solid #f7c1c1;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .descripcion-box {
+            background: #fff7e6;
+            border: 1px solid #ffe0b5;
+            border-radius: 16px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #b46f3a;
+        }
+        .toolbar {
+            background: #fef9f4;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #ffe5cc;
+        }
+        .nivel-section {
+            margin-bottom: 20px;
+        }
+        .selector-nivel {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn-nivel {
+            padding: 10px 20px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 2px solid #bae6fd;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .btn-nivel.active {
+            background: #6b5b95;
+            color: white;
+            border-color: #6b5b95;
+        }
+        .filtros-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .filtro-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 40px;
+            border: 1px solid #f0cfb0;
+        }
+        .filtro-item label {
+            font-weight: 600;
+            color: #9b7b5c;
+            font-size: 12px;
+        }
+        .filtro-select {
+            padding: 6px 10px;
+            border: 1px solid #f0cfb0;
+            border-radius: 20px;
+            font-size: 12px;
+            background: white;
+            min-width: 150px;
+            outline: none;
+        }
+        .controles-globales {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .btn-global {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .btn-limpiar {
+            background: #ffd3b6;
+            color: #a5673f;
+        }
+        .btn-limpiar:hover { background: #ffc4a0; }
+        .btn-exportar {
+            background: #b5e3ff;
+            color: #2c6b8f;
+        }
+        .btn-exportar:hover { background: #9ad6ff; }
         
-        .control-panel {
-            position: absolute; top: 15px; left: 60px; z-index: 1000;
-            background: white; padding: 12px; border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 1px solid #ddd;
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            border: 1px solid #f0cfb0;
+            border-radius: 30px;
+            font-size: 14px;
+            transition: all 0.2s ease;
         }
+        .search-box:focus {
+            outline: none;
+            border-color: #6b5b95;
+            box-shadow: 0 0 0 3px rgba(107, 91, 149, 0.2);
+        }
+        .table-wrapper {
+            max-height: 600px;
+            overflow-y: auto;
+            border-radius: 16px;
+            border: 1px solid #f0e5dd;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            text-align: left;
+        }
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0e5dd;
+        }
+        th {
+            background-color: #c7e9fb;
+            color: #4a5b6e;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+            font-weight: 600;
+            user-select: none;
+        }
+        th:hover {
+            background-color: #b8dff5;
+        }
+        tr:nth-child(even) { background-color: #fefaf7; }
+        tr:hover { background-color: #fff3e8; }
         
-        select {
-            padding: 8px; width: 220px; border-radius: 4px;
-            border: 1px solid #ffb347; margin-top: 5px; cursor: pointer;
+        .resultados-info {
+            text-align: center;
+            margin: 15px 0;
+            font-weight: 600;
+            color: #8b6b4d;
         }
-
-        .info-box {
-            padding: 10px; background: rgba(255,255,255,0.95);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px;
-            border-left: 5px solid #ffb347; line-height: 1.5;
-            min-width: 200px;
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+            color: #6b5b95;
         }
-
-        h4 { margin: 0 0 5px 0; color: #e67e22; }
     </style>
 </head>
 <body>
 
-<div class="control-panel">
-    <strong>Filtrar por Provincia:</strong><br>
-    <select id="provinciaSelect" onchange="filtrarProvincia()">
-        <option value="todos">Cargando datos...</option>
-    </select>
-</div>
+    <div class="header">
+        <div class="logo-section">
+            <div class="logo-placeholder">PA</div>
+            <div>
+                <strong style="font-size: 16px; color: #6b5b95;">PANAMÁ</strong><br>
+                <span style="font-size: 12px; color: #7a7a7a;">Estructura Territorial</span>
+            </div>
+        </div>
+        <div class="credits">
+            Desarrollado por: <a href="#">Raúl Víquez</a>
+        </div>
+    </div>
 
-<div id="map"></div>
+    <div class="container">
+        <h1>Explorador de Datos Territoriales de Panamá</h1>
+        
+        <div class="descripcion-box">
+            Secciona el nivel territorial requerido. Las opciones de filtrado se actualizarán en cascada de acuerdo a tu selección jerárquica.
+        </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <div class="toolbar">
+            <div class="nivel-section">
+                <div class="selector-nivel">
+                    <button class="btn-nivel active" onclick="cambiarNivel('provincia')">Provincias</button>
+                    <button class="btn-nivel" onclick="cambiarNivel('distritos')">Distritos</button>
+                    <button class="btn-nivel" onclick="cambiarNivel('corregimientos')">Corregimientos</button>
+                    <button class="btn-nivel" onclick="cambiarNivel('poblados')">Poblados</button>
+                    <button class="btn-nivel" onclick="cambiarNivel('barrios')">Barrios</button>
+                </div>
+            </div>
 
-<script>
-    // 1. Capas Base
-    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' });
-    const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri' });
+            <div class="filtros-container">
+                <div class="filtro-item" id="div-filtro-prov" style="display:none;">
+                    <label>Provincia:</label>
+                    <select id="filtro-provincia" class="filtro-select" onchange="filtrarCascada('provincia')">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div class="filtro-item" id="div-filtro-dist" style="display:none;">
+                    <label>Distrito:</label>
+                    <select id="filtro-distrito" class="filtro-select" onchange="filtrarCascada('distrito')">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="filtro-item" id="div-filtro-corr" style="display:none;">
+                    <label>Corregimiento:</label>
+                    <select id="filtro-corregimiento" class="filtro-select" onchange="filtrarCascada('corregimiento')">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="filtro-item" id="div-filtro-lupo" style="display:none;">
+                    <label>Poblado (LUPO):</label>
+                    <select id="filtro-poblado" class="filtro-select" onchange="filtrarCascada('poblado')">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+            </div>
 
-    const map = L.map('map', { 
-        center: [8.5, -80.0], 
-        zoom: 8, 
-        layers: [osm] 
-    });
+            <div class="controles-globales">
+                <button class="btn-global btn-limpiar" onclick="limpiarFiltros()">Limpiar Filtros</button>
+                <button class="btn-global btn-exportar" onclick="exportarCSV()">Exportar Vista Actual</button>
+            </div>
+        </div>
 
-    // Control de capas (Calles y Satélite)
-    L.control.layers({ "Calles": osm, "Satélite": satellite }, null, { collapsed: false }).addTo(map);
+        <input type="text" id="search-input" class="search-box" placeholder="Buscar por nombre o código en la tabla activa..." oninput="filtrarTabla()">
 
-    let geojsonLayer;
-    let datosCompletos;
+        <div class="resultados-info" id="contador-registros">
+            Cargando datos...
+        </div>
 
-    // 2. Cuadro de Información (Hover)
-    const info = L.control({position: 'topright'});
-    info.onAdd = function (map) {
-        this._div = L.DomUtil.create('div', 'info-box');
-        this.update();
-        return this._div;
-    };
-    info.update = function (p) {
-        this._div.innerHTML = '<h4>Datos de la UPM</h4>' +  (p ?
-            '<b>CÓDIGO UPM:</b> ' + (p.CODIGO_UPM || 'N/A') + '<br>' +
-            '<b>LUGAR POBLADO:</b> ' + (p.LUPO_NOMB || 'No definido') + '<br>' +
-            '<b>PROVINCIA:</b> ' + (p.PROV_NOMB || '') + '<br>' +
-            '<b>DISTRITO:</b> ' + (p.DIST_NOMB || '') :
-            'Pase el mouse sobre un polígono');
-    };
-    info.addTo(map);
+        <div class="table-wrapper">
+            <table id="tabla-datos">
+                <thead id="tabla-head"></thead>
+                <tbody id="tabla-body"></tbody>
+            </table>
+        </div>
+    </div>
 
-    // 3. Estilo Naranja Pastel e Interacción
-    function estiloBase(feature) {
-        return {
-            fillColor: '#ffcc99', // Naranja pastel
-            weight: 1.2,
-            opacity: 1,
-            color: '#e67e22',     // Borde un poco más oscuro
-            fillOpacity: 0.6
+    <script>
+        // Configuración de rutas de archivos CSV relativos (Para GitHub Pages)
+        const csvPaths = {
+            provincia: './data/provincias.csv',
+            distritos: './data/distritos.csv',
+            corregimientos: './data/corregimientos.csv',
+            poblados: './data/poblados.csv',
+            barrios: './data/barrios.csv'
         };
-    }
 
-    function mostrarCapa(data) {
-        if (geojsonLayer) map.removeLayer(geojsonLayer);
+        // Mapeo estricto de campos solicitados por nivel
+        const estructuras de campos = {
+            provincia: ['PROV_ID', 'PROV_NOMB', 'SHAPE_Leng', 'SHAPE_Area'],
+            distritos: ['PROV_ID', 'DIST_ID', 'DIST_NOMB', 'SHAPE_Leng', 'SHAPE_Area', 'DIST_CODE'],
+            corregimientos: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'CODIGO', 'CORR_NOMB', 'CORR_CATE', 'DESCRIP_ON'],
+            poblados: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'CODIGO', 'LUPO_NOMB', 'LUPO_CLASE', 'DESCRIP_ON', 'LUPO_CATE', 'LUPO_TIPO'],
+            barrios: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'BARR_ID', 'CODIGO', 'BARR_NOMB', 'BARR_CLASE', 'DESCRIP_ON']
+        };
 
-        geojsonLayer = L.geoJSON(data, {
-            style: estiloBase,
-            onEachFeature: function(feature, layer) {
-                layer.on({
-                    mouseover: function(e) {
-                        const l = e.target;
-                        l.setStyle({ 
-                            weight: 3, 
-                            color: '#d35400', 
-                            fillOpacity: 0.8,
-                            fillColor: '#ffb347' 
-                        });
-                        l.bringToFront();
-                        info.update(l.feature.properties);
-                    },
-                    mouseout: function(e) {
-                        geojsonLayer.resetStyle(e.target);
-                        info.update();
-                    }
+        // Estado global de la aplicación de datos en memoria
+        let cacheDatos = {};
+        let nivelActivo = 'provincia';
+        let datosFiltrados = [];
+        let ordenAscendente = true;
+
+        // Al iniciar, cargar el primer nivel
+        window.addEventListener('DOMContentLoaded', () => {
+            cargarNivelTerritorial(nivelActivo);
+        });
+
+        function cargarNivelTerritorial(nivel) {
+            document.getElementById('contador-registros').innerText = "Cargando datos desde el servidor...";
+            
+            if (cacheDatos[nivel]) {
+                procesarYMostrar(nivel);
+                return;
+            }
+
+            Papa.parse(csvPaths[nivel], {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    cacheDatos[nivel] = results.data;
+                    procesarYMostrar(nivel);
+                    actualizarSelectoresFiltros();
+                },
+                error: function(err) {
+                    document.getElementById('contador-registros').innerText = "Error al cargar el archivo CSV de: " + nivel;
+                    console.error(err);
+                }
+            });
+        }
+
+        function procesarYMostrar(nivel) {
+            datosFiltrados = [...cacheDatos[nivel]];
+            generarCabecera(nivel);
+            aplicarFiltrosYRenderizar();
+        }
+
+        function generarCabecera(nivel) {
+            const head = document.getElementById('tabla-head');
+            const campos = estructurasDeCampos[nivel];
+            let html = '<tr>';
+            campos.forEach((campo, index) => {
+                html += `<th onclick="ordenarTabla('${campo}')">${campo} <span id="sort-${campo}"></span></th>`;
+            });
+            html += '</tr>';
+            head.innerHTML = html;
+        }
+
+        function cambiarNivel(nuevoNivel) {
+            nivelActivo = nuevoNivel;
+            
+            // Actualizar diseño de botones de pestañas
+            document.querySelectorAll('.btn-nivel').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText.toLowerCase() === nuevoNivel) btn.classList.add('active');
+            });
+            // Ajustar para corregimientos/poblados/distritos que varían en texto de botón
+            const botones = document.querySelectorAll('.btn-nivel');
+            const mapeoIndices = { provincia: 0, distritos: 1, corregimientos: 2, poblados: 3, barrios: 4 };
+            botones.forEach(b => b.classList.remove('active'));
+            botones[mapeoIndices[nuevoNivel]].classList.add('active');
+
+            // Mostrar/Ocultar selectores condicionales según nivel jerárquico elegido
+            document.getElementById('div-filtro-prov').style.display = nuevoNivel !== 'provincia' ? 'block' : 'none';
+            document.getElementById('div-filtro-dist').style.display = ['corregimientos', 'poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
+            document.getElementById('div-filtro-corr').style.display = ['poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
+            document.getElementById('div-filtro-lupo').style.display = nuevoNivel === 'barrios' ? 'block' : 'none';
+
+            cargarNivelTerritorial(nuevoNivel);
+        }
+
+        function aplicarFiltrosYRenderizar() {
+            let baseDatos = cacheDatos[nivelActivo] ? [...cacheDatos[nivelActivo]] : [];
+
+            const pVal = document.getElementById('filtro-provincia').value;
+            const dVal = document.getElementById('filtro-distrito').value;
+            const cVal = document.getElementById('filtro-corregimiento').value;
+            const lVal = document.getElementById('filtro-poblado').value;
+
+            // Filtrado Jerárquico en Cascada
+            if (pVal && nivelActivo !== 'provincia') {
+                baseDatos = baseDatos.filter(r => r.PROV_ID === pVal);
+            }
+            if (dVal && ['corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
+                baseDatos = baseDatos.filter(r => r.DIST_ID === dVal);
+            }
+            if (cVal && ['poblados', 'barrios'].includes(nivelActivo)) {
+                baseDatos = baseDatos.filter(r => r.CORR_ID === cVal);
+            }
+            if (lVal && nivelActivo === 'barrios') {
+                baseDatos = baseDatos.filter(r => r.LUPO_ID === lVal);
+            }
+
+            // Filtrado por barra de búsqueda global
+            const busqueda = document.getElementById('search-input').value.toLowerCase().trim();
+            if (busqueda !== "") {
+                const campos = estructurasDeCampos[nivelActivo];
+                baseDatos = baseDatos.filter(fila => {
+                    return campos.some(campo => String(fila[campo]).toLowerCase().includes(busqueda));
                 });
             }
-        }).addTo(map);
 
-        if (data.features.length > 0) {
-            map.fitBounds(geojsonLayer.getBounds());
+            datosFiltrados = baseDatos;
+            renderizarTabla();
         }
-    }
 
-    function poblarSelector(data) {
-        const select = document.getElementById('provinciaSelect');
-        const provincias = [...new Set(data.features.map(f => f.properties.PROV_NOMB))].sort();
-        
-        select.innerHTML = '<option value="todos">-- Todas las Provincias --</option>';
-        provincias.forEach(prov => {
-            if(prov) {
-                const el = document.createElement('option');
-                el.value = el.textContent = prov;
-                select.appendChild(el);
+        function renderizarTabla() {
+            const tbody = document.getElementById('tabla-body');
+            const campos = estructurasDeCampos[nivelActivo];
+            
+            if (datosFiltrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${campos.length}" style="text-align:center; padding:30px; color:#999;">No se encontraron registros con las condiciones especificadas.</td></tr>`;
+                document.getElementById('contador-registros').innerText = "Mostrando 0 registros";
+                return;
             }
-        });
-    }
 
-    function filtrarProvincia() {
-        const val = document.getElementById('provinciaSelect').value;
-        if (val === "todos") {
-            mostrarCapa(datosCompletos);
-        } else {
-            const filtrados = {
-                type: "FeatureCollection",
-                features: datosCompletos.features.filter(f => f.properties.PROV_NOMB === val)
-            };
-            mostrarCapa(filtrados);
+            let html = '';
+            datosFiltrados.forEach(fila => {
+                html += 'tr>';
+                campos.forEach(campo => {
+                    html += `<td>${fila[campo] || ''}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            tbody.innerHTML = html;
+            document.getElementById('contador-registros').innerText = `Mostrando ${datosFiltrados.length} registros`;
         }
-    }
 
-    // 4. Carga del archivo corregido
-    fetch('upm_tot.geojson', {
-    headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-    }
-})
-        .then(res => {
-            if(!res.ok) throw new Error("No se pudo cargar 'upm_tot.geojson'");
-            return res.json();
-        })
-        .then(data => {
-            datosCompletos = data;
-            poblarSelector(data);
-            mostrarCapa(data);
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Error: " + err.message);
-        });
+        function filtrarTabla() {
+            aplicarFiltrosYRenderizar();
+        }
 
-</script>
+        // Carga dinámica de los Selectores de Filtro utilizando Provincias como pivote
+        function actualizarSelectoresFiltros() {
+            // Si ya cargamos provincias en caché, poblar select de provincias
+            if (cacheDatos['provincia'] && document.getElementById('filtro-provincia').options.length <= 1) {
+                const provSelect = document.getElementById('filtro-provincia');
+                const provs = [...new Set(cacheDatos['provincia'].map(r => JSON.stringify({id: r.PROV_ID, nomb: r.PROV_NOMB})))];
+                provs.forEach(pStr => {
+                    const p = JSON.parse(pStr);
+                    if(p.id) provSelect.options.add(new Option(p.nomb, p.id));
+                });
+            }
+        }
+
+        function filtrarCascada(tipoFiltro) {
+            const pVal = document.getElementById('filtro-provincia').value;
+            
+            if (tipoFiltro === 'provincia') {
+                // Reiniciar hijos
+                rebuildSelect('filtro-distrito');
+                rebuildSelect('filtro-corregimiento');
+                rebuildSelect('filtro-poblado');
+                
+                if (pVal && cacheDatos['distritos']) {
+                    const distSelect = document.getElementById('filtro-distrito');
+                    const filtrados = cacheDatos['distritos'].filter(r => r.PROV_ID === pVal);
+                    const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.DIST_ID, nomb: r.DIST_NOMB})))];
+                    unicos.forEach(dStr => {
+                        const d = JSON.parse(dStr);
+                        distSelect.options.add(new Option(d.nomb, d.id));
+                    });
+                }
+            } 
+            else if (tipoFiltro === 'distrito') {
+                rebuildSelect('filtro-corregimiento');
+                rebuildSelect('filtro-poblado');
+                const dVal = document.getElementById('filtro-distrito').value;
+                
+                if (pVal && dVal && cacheDatos['corregimientos']) {
+                    const corrSelect = document.getElementById('filtro-corregimiento');
+                    const filtrados = cacheDatos['corregimientos'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal);
+                    const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.CORR_ID, nomb: r.CORR_NOMB})))];
+                    unicos.forEach(cStr => {
+                        const c = JSON.parse(cStr);
+                        corrSelect.options.add(new Option(c.nomb, c.id));
+                    });
+                }
+            }
+            else if (tipoFiltro === 'corregimiento') {
+                rebuildSelect('filtro-poblado');
+                const dVal = document.getElementById('filtro-distrito').value;
+                const cVal = document.getElementById('filtro-corregimiento').value;
+
+                if (pVal && dVal && cVal && cacheDatos['poblados']) {
+                    const lupoSelect = document.getElementById('filtro-poblado');
+                    const filtrados = cacheDatos['poblados'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal && r.CORR_ID === cVal);
+                    const unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.LUPO_ID, nomb: r.LUPO_NOMB})))];
+                    unicos.forEach(lStr => {
+                        const l = JSON.parse(lStr);
+                        lupoSelect.options.add(new Option(l.nomb, l.id));
+                    });
+                }
+            }
+
+            // Asegurar la precarga preventiva de tablas hijas para que funcionen los filtros cruzados
+            const nivelesAsegurar = ['distritos', 'corregimientos', 'poblados'];
+            nivelesAsegurar.forEach(n => {
+                if(!cacheDatos[n]) {
+                    Papa.parse(csvPaths[n], {
+                        download: true, header: true, skipEmptyLines: true,
+                        complete: (res) => { cacheDatos[n] = res.data; actualizarSelectoresFiltros(); }
+                    });
+                }
+            });
+
+            aplicarFiltrosYRenderizar();
+        }
+
+        function rebuildSelect(id) {
+            const sel = document.getElementById(id);
+            sel.innerHTML = `<option value="">${id.includes('dist') ? 'Todos' : id.includes('corr') ? 'Todos' : 'Todos'}</option>`;
+        }
+
+        function ordenarTabla(campo) {
+            ordenAscendente = !ordenAscendente;
+            datosFiltrados.sort((a, b) => {
+                let valA = String(a[campo] || '').toLowerCase();
+                let valB = String(b[campo] || '').toLowerCase();
+                
+                // Si son números, ordenar numéricamente
+                if (!isNaN(valA) && !isNaN(valB) && valA !== '' && valB !== '') {
+                    return ordenAscendente ? valA - valB : valB - valA;
+                }
+                
+                return ordenAscendente ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            });
+            renderizarTabla();
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('filtro-provincia').value = "";
+            rebuildSelect('filtro-distrito');
+            rebuildSelect('filtro-corregimiento');
+            rebuildSelect('filtro-poblado');
+            document.getElementById('search-input').value = "";
+            aplicarFiltrosYRenderizar();
+        }
+
+        function exportarCSV() {
+            if(datosFiltrados.length === 0) return;
+            const campos = estructurasDeCampos[nivelActivo];
+            const csvContent = Papa.unparse({
+                fields: campos,
+                data: datosFiltrados
+            });
+            
+            const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", `exportacion_${nivelActivo}_panama.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
 </body>
 </html>
