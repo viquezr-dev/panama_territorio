@@ -420,16 +420,7 @@ const csvPaths = {
         const cVal = document.getElementById('filtro-corregimiento').value;
         const lVal = document.getElementById('filtro-poblado').value;
     
-        // 1. Si estamos en el nivel de PROVINCIAS (Botón Morado), forzar orden numérico ascendente
-        if (nivelActivo === 'provincia') {
-            baseDatos.sort((a, b) => {
-                let idA = String(a.PROV_ID || '').trim();
-                let idB = String(b.PROV_ID || '').trim();
-                return idA.localeCompare(idB, undefined, { numeric: true });
-            });
-        }
-    
-        // 2. Filtrado Jerárquico en Cascada para los demás niveles
+        // 1. Filtrado Jerárquico en Cascada
         if (pVal && nivelActivo !== 'provincia') {
             baseDatos = baseDatos.filter(r => r.PROV_ID === pVal);
         }
@@ -443,7 +434,7 @@ const csvPaths = {
             baseDatos = baseDatos.filter(r => r.LUPO_ID === lVal);
         }
     
-        // 3. Filtrado por barra de búsqueda global
+        // 2. Filtrado por barra de búsqueda global
         const busqueda = document.getElementById('search-input').value.toLowerCase().trim();
         if (busqueda !== "") {
             const campos = estructurasDeCampos[nivelActivo];
@@ -451,6 +442,23 @@ const csvPaths = {
                 return campos.some(campo => String(fila[campo] || '').toLowerCase().includes(busqueda));
             });
         }
+    
+        // 3. ¡NUEVO Y DEFINITIVO!: Ordenar la tabla resultante ascendentemente para CUALQUIER nivel
+        baseDatos.sort((a, b) => {
+            let idA = '', idB = '';
+            
+            // Mapeamos el ID correspondiente según el nivel que el usuario está viendo en pantalla
+            if (nivelActivo === 'provincia') { idA = a.PROV_ID; idB = b.PROV_ID; }
+            else if (nivelActivo === 'distritos') { idA = a.DIST_ID; idB = b.DIST_ID; }
+            else if (nivelActivo === 'corregimientos') { idA = a.CORR_ID; idB = b.CORR_ID; }
+            else if (nivelActivo === 'poblados') { idA = a.LUPO_ID; idB = b.LUPO_ID; }
+            else if (nivelActivo === 'barrios') { idA = a.BARR_ID; idB = b.BARR_ID; }
+    
+            idA = String(idA || '').trim();
+            idB = String(idB || '').trim();
+            
+            return idA.localeCompare(idB, undefined, { numeric: true });
+        });
     
         datosFiltrados = baseDatos;
         renderizarTabla();
