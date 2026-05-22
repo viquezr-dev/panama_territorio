@@ -420,21 +420,30 @@ const csvPaths = {
         const cVal = document.getElementById('filtro-corregimiento').value;
         const lVal = document.getElementById('filtro-poblado').value;
     
-        // Filtrado Jerárquico en Cascada
+        // 1. Si estamos en el nivel de PROVINCIAS (Botón Morado), forzar orden numérico ascendente
+        if (nivelActivo === 'provincia') {
+            baseDatos.sort((a, b) => {
+                let idA = String(a.PROV_ID || '').trim();
+                let idB = String(b.PROV_ID || '').trim();
+                return idA.localeCompare(idB, undefined, { numeric: true });
+            });
+        }
+    
+        // 2. Filtrado Jerárquico en Cascada para los demás niveles
         if (pVal && nivelActivo !== 'provincia') {
             baseDatos = baseDatos.filter(r => r.PROV_ID === pVal);
         }
-        if (dVal && ['corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
+        if (dVal && ['distritos', 'corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
             baseDatos = baseDatos.filter(r => r.DIST_ID === dVal);
         }
-        if (cVal && ['poblados', 'barrios'].includes(nivelActivo)) {
+        if (cVal && ['corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
             baseDatos = baseDatos.filter(r => r.CORR_ID === cVal);
         }
-        if (lVal && nivelActivo === 'barrios') {
+        if (lVal && ['poblados', 'barrios'].includes(nivelActivo)) {
             baseDatos = baseDatos.filter(r => r.LUPO_ID === lVal);
         }
     
-        // Filtrado por barra de búsqueda global
+        // 3. Filtrado por barra de búsqueda global
         const busqueda = document.getElementById('search-input').value.toLowerCase().trim();
         if (busqueda !== "") {
             const campos = estructurasDeCampos[nivelActivo];
