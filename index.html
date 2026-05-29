@@ -57,7 +57,20 @@
             font-weight: bold;
         }
         .visitor-badge {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #f0f2f5;
+            border-radius: 20px;
+            border: 1px solid #e0e2e6;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b5b95;
+        }
+        .visitor-count {
+            color: #6b5b95;
+            font-weight: 700;
         }
         .container {
             max-width: 95%;
@@ -243,7 +256,7 @@
         <div class="credits">
             <div>Desarrollado por: <a href="#">Raúl Víquez</a></div>
             <div class="visitor-badge">
-                <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://viquezr-dev.github.io/panama_territorio&count_bg=%236B5B95&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=visitas&edge_cut=rounded" alt="Contador de visitas" />
+                👁️ Visitas: <span class="visitor-count" id="visit-count">-</span>
             </div>
         </div>
     </div>
@@ -347,8 +360,23 @@ const csvPaths = {
     
     // Al iniciar, cargar el primer nivel
     window.addEventListener('DOMContentLoaded', () => {
+        inicializarContadorVisitas();
         cargarNivelTerritorial(nivelActivo);
     });
+    
+    // Función para inicializar el contador de visitas local
+    function inicializarContadorVisitas() {
+        let visitas = localStorage.getItem('visits_panama_territorio') || 0;
+        visitas = parseInt(visitas) + 1;
+        localStorage.setItem('visits_panama_territorio', visitas);
+        document.getElementById('visit-count').textContent = visitas;
+        
+        // También enviar a Hits API de forma no bloqueante
+        fetch('https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://viquezr-dev.github.io/panama_territorio&count_bg=%236B5B95&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=visitas&edge_cut=rounded', {
+            method: 'GET',
+            mode: 'no-cors'
+        }).catch(e => console.log('Contador remoto: disponible cuando hay conexión'));
+    }
     
     function cargarNivelTerritorial(nivel) {
         document.getElementById('contador-registros').innerText = "Cargando datos desde el servidor...";
