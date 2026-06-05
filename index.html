@@ -364,18 +364,35 @@ const csvPaths = {
         cargarNivelTerritorial(nivelActivo);
     });
     
-    // Función para inicializar el contador de visitas local
+    // Función para inicializar el contador de visitas usando CounterAPI
     function inicializarContadorVisitas() {
-        let visitas = localStorage.getItem('visits_panama_territorio') || 0;
-        visitas = parseInt(visitas) + 1;
-        localStorage.setItem('visits_panama_territorio', visitas);
-        document.getElementById('visit-count').textContent = visitas;
+        const namespace = "cotel-panama-visor-viquezr";
+        const key = "visitas_totales";
         
-        // También enviar a Hits API de forma no bloqueante
-        fetch('https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://viquezr-dev.github.io/panama_territorio&count_bg=%236B5B95&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=visitas&edge_cut=rounded', {
-            method: 'GET',
-            mode: 'no-cors'
-        }).catch(e => console.log('Contador remoto: disponible cuando hay conexión'));
+        // Llamada a CounterAPI para incrementar y obtener el contador
+        fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/increment`)
+            .then(res => {
+                if (!res.ok) throw new Error("Error en respuesta de API");
+                return res.json();
+            })
+            .then(data => {
+                const el = document.getElementById('visit-count');
+                if (el) {
+                    // Mostrar el contador formateado con comas (ej: 1,250)
+                    el.textContent = Number(data.value).toLocaleString('es-PA');
+                }
+            })
+            .catch(err => {
+                console.log("Error con CounterAPI, usando respaldo local:", err);
+                // Respaldo: usar localStorage si la API falla
+                let localVisits = localStorage.getItem('backup_visitas_panama') || 0;
+                localVisits = parseInt(localVisits) + 1;
+                localStorage.setItem('backup_visitas_panama', localVisits);
+                const el = document.getElementById('visit-count');
+                if (el) {
+                    el.textContent = localVisits.toLocaleString('es-PA');
+                }
+            });
     }
     
     function cargarNivelTerritorial(nivel) {
