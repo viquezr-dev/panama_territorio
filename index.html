@@ -370,30 +370,38 @@ const csvPaths = {
         const key = "visitas_totales";
         
         // Llamada a CounterAPI para incrementar y obtener el contador
-        fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/increment`)
-            .then(res => {
-                if (!res.ok) throw new Error("Error en respuesta de API");
-                return res.json();
-            })
-            .then(data => {
-                const el = document.getElementById('visit-count');
-                if (el) {
-                    // Mostrar el contador formateado con comas (ej: 1,250)
-                    el.textContent = Number(data.value).toLocaleString('es-PA');
-                }
-            })
-            .catch(err => {
-                console.log("Error con CounterAPI, usando respaldo local:", err);
-                // Respaldo: usar localStorage si la API falla
-                let localVisits = localStorage.getItem('backup_visitas_panama') || 0;
-                localVisits = parseInt(localVisits) + 1;
-                localStorage.setItem('backup_visitas_panama', localVisits);
-                const el = document.getElementById('visit-count');
-                if (el) {
-                    el.textContent = localVisits.toLocaleString('es-PA');
-                }
-            });
-    }
+        fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Error de conexión con el servidor de conteo");
+            return res.json();
+        })
+        .then(data => {
+            const el = document.getElementById('contador-visitas');
+            if (el) {
+                // Muestra el valor N global real de la base de datos de la API
+                el.innerText = Number(data.value).toLocaleString('es-PA');
+            }
+        })
+        .catch(err => {
+            console.warn("La API global falló, usando pasarela secundaria:");
+            
+            // PASARELA DE RESPALDO 2: Si countapi falla, usamos otra API pública instantánea
+            fetch(`https://count.jasonet.co/hit/${namespace}`)
+                .then(r => r.json())
+                .then(d => {
+                    const el = document.getElementById('contador-visitas');
+                    if (el) el.innerText = Number(d.value).toLocaleString('es-PA');
+                })
+                .catch(e => {
+                    // Última instancia: Conteo local individual por computadora si el usuario no tiene internet
+                    let localVisits = localStorage.getItem('backup_visitas') || 1;
+                    localVisits = parseInt(localVisits) + 1;
+                    localStorage.setItem('backup_visitas', localVisits);
+                    const el = document.getElementById('contador-visitas');
+                    if (el) el.innerText = localVisits + " (Local)";
+                });
+        });
+}
     
     function cargarNivelTerritorial(nivel) {
         document.getElementById('contador-registros').innerText = "Cargando datos desde el servidor...";
