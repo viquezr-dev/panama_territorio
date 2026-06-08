@@ -364,43 +364,30 @@ const csvPaths = {
         cargarNivelTerritorial(nivelActivo);
     });
     
-    // Función para inicializar el contador de visitas usando CountAPI
+    // Función para inicializar el contador de visitas usando StaticCounter
     function inicializarContadorVisitas() {
-        const namespace = "panama-visor-viquezr";
-        const key = "visitas_totales";
+        // Usar StaticCounter: servicio confiable y gratuito
+        const el = document.getElementById('visit-count');
+        if (!el) return;
         
-        fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
-        .then(res => {
-            if (!res.ok) throw new Error("Error de conexión con el servidor de conteo");
-            return res.json();
-        })
-        .then(data => {
-            const el = document.getElementById('visit-count');
-            if (el) {
-                // Muestra el valor N global real de la base de datos de la API
-                el.innerText = Number(data.value).toLocaleString('es-PA');
-            }
-        })
-        .catch(err => {
-            console.warn("La API global falló, usando pasarela secundaria:", err);
-            
-            // PASARELA DE RESPALDO 2: Si countapi falla, usamos otra API pública instantánea
-            fetch(`https://count.jasonet.co/hit/${namespace}`)
-                .then(r => r.json())
-                .then(d => {
-                    const el = document.getElementById('visit-count');
-                    if (el) el.innerText = Number(d.value).toLocaleString('es-PA');
-                })
-                .catch(e => {
-                    console.warn("Ambas APIs fallaron, usando conteo local:", e);
-                    // Última instancia: Conteo local individual por computadora si el usuario no tiene internet
-                    let localVisits = localStorage.getItem('backup_visitas') || 1;
-                    localVisits = parseInt(localVisits) + 1;
-                    localStorage.setItem('backup_visitas', localVisits);
-                    const el = document.getElementById('visit-count');
-                    if (el) el.innerText = localVisits + " (Local)";
-                });
-        });
+        // StaticCounter genera un badge que actualiza visitas automáticamente
+        fetch(`https://api.staticcounter.com/v3/staticcounter?user=d1c14f6f37f6402b&key=panama_visor&format=json`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.counter && data.counter.count) {
+                    el.innerText = Number(data.counter.count).toLocaleString('es-PA');
+                } else {
+                    throw new Error("Respuesta inválida");
+                }
+            })
+            .catch(err => {
+                console.warn("StaticCounter falló, intentando con localStorage:", err);
+                // Respaldo: localStorage
+                let visits = localStorage.getItem('panama_visits') || 1;
+                visits = parseInt(visits) + 1;
+                localStorage.setItem('panama_visits', visits);
+                el.innerText = visits.toLocaleString('es-PA');
+            });
     }
     
     function cargarNivelTerritorial(nivel) {
