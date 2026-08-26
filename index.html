@@ -441,8 +441,8 @@ const nombresColumnas = {
     'LEY_MOD_P': 'Ley Mod Prov',
     'GACETA_P': 'Gaceta Prov',
     'GACE_MOD_P': 'Gaceta Mod Prov',
-    'Shape_Leng': 'Longitud',
-    'Shape_Area': 'Área',
+    'Shape_Leng': 'Perímetro (km)',
+    'Shape_Area': 'Área (km²)'
     'DIST_ID': 'Dist ID',
     'DIST_NOMB': 'Distrito',
     'DIST_CODE': 'Cód Dist',
@@ -626,9 +626,23 @@ function renderizarTabla() {
         html += '<tr>'; 
         campos.forEach((campo) => {
             let valor = fila[campo] !== undefined && fila[campo] !== null ? String(fila[campo]) : '';
+            
+            // CONVERSIÓN A KILÓMETROS
+            if (campo === 'Shape_Area' && valor !== '') {
+                let num = parseFloat(valor.replace(/,/g, ''));
+                if (!isNaN(num)) {
+                    valor = (num / 1000000).toFixed(2) + ' km²';
+                }
+            } else if (campo === 'Shape_Leng' && valor !== '') {
+                let num = parseFloat(valor.replace(/,/g, ''));
+                if (!isNaN(num)) {
+                    valor = (num / 1000).toFixed(2) + ' km';
+                }
+            }
+            
             let displayValor = valor;
             let titulo = '';
-            if (valor.length > 20) {
+            if (typeof valor === 'string' && valor.length > 20) {
                 titulo = valor;
                 displayValor = valor.substring(0, 18) + '…';
             }
