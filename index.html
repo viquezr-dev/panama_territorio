@@ -211,7 +211,7 @@
             border-collapse: collapse;
             font-size: 11px;
             text-align: left;
-            min-width: 800px;
+            min-width: 1200px;
         }
         th, td {
             padding: 8px 10px;
@@ -250,7 +250,7 @@
             font-size: 11px;
             white-space: nowrap;
             z-index: 20;
-            max-width: 300px;
+            max-width: 400px;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -424,49 +424,50 @@ const csvPaths = {
 };
 
 // ============================================================
-// ESTRUCTURA DE CAMPOS ACTUALIZADA CON TODOS LOS CAMPOS SOLICITADOS
+// ESTRUCTURA DE CAMPOS - CORREGIDA CON LAS COLUMNAS EXACTAS
 // ============================================================
 const estructurasDeCampos = {
-    // PROVINCIAS: TODOS los campos solicitados
+    // PROVINCIAS: fid, PROV_ID, PROV_NOMB, Shape_Leng, Shape_Area, PROV_LEY, LEY_MOD_P, GACETA_P, GACE_MOD_P
     provincia: [
-        'PROV_ID', 'PROV_NOMB', 'PROV_LEY', 'LEY_MOD_P', 
+        'PROV_ID', 'PROV_NOMB', 'PROV_LEY', 'LEY_MOD_P',
         'GACETA_P', 'GACE_MOD_P', 'Shape_Leng', 'Shape_Area'
     ],
     
-    // DISTRITOS: TODOS los campos solicitados
+    // DISTRITOS: fid, PROV_ID, PROV_NOMB, DIST_ID, DIST_NOMB, DIST_LEY, LEY_MOD_D, GACETA_D, GACE_MOD_D, Shape_Leng, Shape_Area, DIST_CODE
     distritos: [
-        'PROV_ID', 'PROV_NOMB', 'DIST_ID', 'DIST_NOMB', 
-        'DIST_CODE', 'DIST_LEY', 'LEY_MOD_D', 
-        'GACETA_D', 'GACE_MOD_D', 'Shape_Leng', 'Shape_Area'
+        'PROV_ID', 'PROV_NOMB', 'DIST_ID', 'DIST_NOMB',
+        'DIST_LEY', 'LEY_MOD_D', 'GACETA_D', 'GACE_MOD_D',
+        'Shape_Leng', 'Shape_Area', 'DIST_CODE'
     ],
     
-    // CORREGIMIENTOS: TODOS los campos solicitados
+    // CORREGIMIENTOS: fid, PROV_ID, PROV_NOMB, DIST_ID, DIST_NOMB, CORR_ID, CORR_NOMB, CORR_LEY, LEY_MOD_C, GACETA_C, GACE_MOD_C, Shape_Leng, Shape_Area, REGI_ID, CORR_CODE, DIST_CODE
     corregimientos: [
-        'PROV_ID', 'PROV_NOMB', 'DIST_ID', 'DIST_NOMB', 
-        'DIST_CODE', 'CORR_ID', 'CORR_NOMB', 'CORR_CODE',
-        'CORR_LEY', 'LEY_MOD_C', 'GACETA_C', 'GACE_MOD_C',
-        'REGI_ID', 'Shape_Leng', 'Shape_Area'
+        'PROV_ID', 'PROV_NOMB', 'DIST_ID', 'DIST_NOMB',
+        'CORR_ID', 'CORR_NOMB', 'CORR_LEY', 'LEY_MOD_C',
+        'GACETA_C', 'GACE_MOD_C', 'Shape_Leng', 'Shape_Area',
+        'REGI_ID', 'CORR_CODE', 'DIST_CODE'
     ],
     
     // POBLADOS (se mantienen igual)
     poblados: [
-        'PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 
-        'CODIGO', 'LUPO_NOMB', 'LUPO_CLASE', 'DESCRIP_ON', 
+        'PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID',
+        'CODIGO', 'LUPO_NOMB', 'LUPO_CLASE', 'DESCRIP_ON',
         'LUPO_CATE', 'LUPO_TIPO'
     ],
     
     // BARRIOS (se mantienen igual)
     barrios: [
-        'PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 
+        'PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID',
         'BARR_ID', 'CODIGO', 'BARR_NOMB', 'BARR_CLASE', 'DESCRIP_ON'
     ]
 };
 
 // ============================================================
-// NOMBRES AMIGABLES PARA LAS COLUMNAS (más legibles)
+// NOMBRES AMIGABLES PARA LAS COLUMNAS
 // ============================================================
 const nombresColumnas = {
-    'PROV_ID': 'ID Prov',
+    
+    'PROV_ID': 'Prov ID',
     'PROV_NOMB': 'Provincia',
     'PROV_LEY': 'Ley Prov',
     'LEY_MOD_P': 'Ley Mod Prov',
@@ -474,14 +475,14 @@ const nombresColumnas = {
     'GACE_MOD_P': 'Gaceta Mod Prov',
     'Shape_Leng': 'Longitud',
     'Shape_Area': 'Área',
-    'DIST_ID': 'ID Dist',
+    'DIST_ID': 'Dist ID',
     'DIST_NOMB': 'Distrito',
     'DIST_CODE': 'Cód Dist',
     'DIST_LEY': 'Ley Dist',
     'LEY_MOD_D': 'Ley Mod Dist',
     'GACETA_D': 'Gaceta Dist',
     'GACE_MOD_D': 'Gaceta Mod Dist',
-    'CORR_ID': 'ID Corr',
+    'CORR_ID': 'Corr ID',
     'CORR_NOMB': 'Corregimiento',
     'CORR_CODE': 'Cód Corr',
     'CORR_LEY': 'Ley Corr',
@@ -547,35 +548,34 @@ function cargarNivelTerritorial(nivel) {
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
+            console.log(`✅ Datos cargados para ${nivel}:`, results.data.length, 'registros');
+            console.log('📋 Primer registro:', results.data[0]);
+            console.log('📋 Columnas:', Object.keys(results.data[0] || {}));
             cacheDatos[nivel] = results.data;
             procesarYMostrar(nivel);
             actualizarSelectoresFiltros();
         },
         error: function(err) {
-            document.getElementById('contador-registros').innerText = "Error al cargar: " + nivel;
-            console.error(err);
+            document.getElementById('contador-registros').innerText = "❌ Error al cargar: " + nivel;
+            console.error('Error cargando CSV:', err);
         }
     });
 }
 
 function procesarYMostrar(nivel) {
+    if (!cacheDatos[nivel] || cacheDatos[nivel].length === 0) {
+        document.getElementById('contador-registros').innerText = "⚠️ No hay datos disponibles";
+        return;
+    }
+    
     datosFiltrados = [...cacheDatos[nivel]];
     
-    // Orden inicial por ID principal
-    let idField = '';
-    if (nivel === 'provincia') idField = 'PROV_ID';
-    else if (nivel === 'distritos') idField = 'DIST_ID';
-    else if (nivel === 'corregimientos') idField = 'CORR_ID';
-    else if (nivel === 'poblados') idField = 'LUPO_ID';
-    else if (nivel === 'barrios') idField = 'BARR_ID';
-    
-    if (idField) {
-        datosFiltrados.sort((a, b) => {
-            let idA = String(a[idField] || '').trim();
-            let idB = String(b[idField] || '').trim();
-            return idA.localeCompare(idB, undefined, { numeric: true });
-        });
-    }
+    // Orden inicial por PROV_ID
+    datosFiltrados.sort((a, b) => {
+        let idA = String(a.PROV_ID || '').trim();
+        let idB = String(b.PROV_ID || '').trim();
+        return idA.localeCompare(idB, undefined, { numeric: true });
+    });
 
     generarCabecera(nivel);
     aplicarFiltrosYRenderizar();
@@ -584,6 +584,11 @@ function procesarYMostrar(nivel) {
 function generarCabecera(nivel) {
     const head = document.getElementById('tabla-head');
     const campos = estructurasDeCampos[nivel];
+    if (!campos) {
+        console.error('❌ No hay campos definidos para:', nivel);
+        return;
+    }
+    
     let html = '<tr>';
     campos.forEach((campo) => {
         const label = nombresColumnas[campo] || campo;
@@ -604,6 +609,7 @@ function cambiarNivel(nuevoNivel) {
         botones[mapeoIndices[nuevoNivel]].classList.add('active');
     }
 
+    // Mostrar/ocultar filtros según nivel
     document.getElementById('div-filtro-prov').style.display = nuevoNivel !== 'provincia' ? 'block' : 'none';
     document.getElementById('div-filtro-dist').style.display = ['corregimientos', 'poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
     document.getElementById('div-filtro-corr').style.display = ['poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
@@ -620,6 +626,7 @@ function aplicarFiltrosYRenderizar() {
     const cVal = document.getElementById('filtro-corregimiento').value;
     const lVal = document.getElementById('filtro-poblado').value;
 
+    // Filtros en cascada
     if (pVal && nivelActivo !== 'provincia') {
         baseDatos = baseDatos.filter(r => r.PROV_ID === pVal);
     }
@@ -633,6 +640,7 @@ function aplicarFiltrosYRenderizar() {
         baseDatos = baseDatos.filter(r => r.LUPO_ID === lVal);
     }
 
+    // Búsqueda global
     const busqueda = document.getElementById('search-input').value.toLowerCase().trim();
     if (busqueda !== "") {
         const campos = estructurasDeCampos[nivelActivo];
@@ -649,22 +657,22 @@ function renderizarTabla() {
     const tbody = document.getElementById('tabla-body');
     const campos = estructurasDeCampos[nivelActivo];
     
-    if (datosFiltrados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${campos.length}" style="text-align:center; padding:30px; color:#999;">No se encontraron registros.</td></tr>`;
+    if (!campos || datosFiltrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; color:#999;">No se encontraron registros.</td></tr>`;
         document.getElementById('contador-registros').innerText = "Mostrando 0 registros";
         return;
     }
 
     let html = '';
-    datosFiltrados.forEach(fila => {
+    datosFiltrados.forEach((fila) => {
         html += '<tr>'; 
-        campos.forEach(campo => {
-            let valor = fila[campo] || '';
+        campos.forEach((campo) => {
+            let valor = fila[campo] !== undefined && fila[campo] !== null ? String(fila[campo]) : '';
             let displayValor = valor;
             let titulo = '';
-            if (typeof valor === 'string' && valor.length > 20) {
+            if (valor.length > 25) {
                 titulo = valor;
-                displayValor = valor.substring(0, 18) + '…';
+                displayValor = valor.substring(0, 22) + '…';
             }
             html += `<td${titulo ? ` title="${titulo.replace(/"/g, '&quot;')}"` : ''}>${displayValor}</td>`;
         });
@@ -757,6 +765,7 @@ function filtrarCascada(tipoFiltro) {
         }
     }
 
+    // Cargar datos faltantes
     const nivelesAsegurar = ['distritos', 'corregimientos', 'poblados'];
     nivelesAsegurar.forEach(n => {
         if(!cacheDatos[n]) {
