@@ -4,7 +4,6 @@
     <title>Visualizador Geográfico de Panamá</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- PapaParse para procesar los archivos CSV de forma eficiente -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         body { 
@@ -75,7 +74,7 @@
             font-weight: 700;
         }
         .container {
-            max-width: 95%;
+            max-width: 98%;
             margin: 0 auto;
             background: white;
             padding: 25px;
@@ -210,15 +209,15 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 11px;
             text-align: left;
-            min-width: 600px;
+            min-width: 800px;
         }
         th, td {
-            padding: 10px 12px;
+            padding: 8px 10px;
             border-bottom: 1px solid #f0e5dd;
             white-space: nowrap;
-            max-width: 200px;
+            max-width: 150px;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -231,6 +230,7 @@
             font-weight: 600;
             user-select: none;
             z-index: 10;
+            font-size: 10px;
         }
         th:hover {
             background-color: #b8dff5;
@@ -238,12 +238,24 @@
         tr:nth-child(even) { background-color: #fefaf7; }
         tr:hover { background-color: #fff3e8; }
         
-        /* Estilo para columnas con valores largos */
-        td.largo {
-            max-width: 150px;
+        td[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            left: 0;
+            top: 100%;
+            background: #333;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
             white-space: nowrap;
+            z-index: 20;
+            max-width: 300px;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+        td {
+            position: relative;
         }
         
         .resultados-info {
@@ -259,7 +271,6 @@
             color: #6b5b95;
         }
 
-        /* Responsive para tablas */
         @media (max-width: 768px) {
             .filtro-select {
                 min-width: 100px;
@@ -292,7 +303,7 @@
             }
             th, td {
                 padding: 6px 8px;
-                font-size: 11px;
+                font-size: 10px;
             }
             .table-wrapper {
                 max-height: 400px;
@@ -306,29 +317,9 @@
             body { padding: 10px; }
             .container { padding: 15px; }
             .logo-placeholder { width: 40px; height: 40px; font-size: 12px; }
-            th, td { padding: 4px 6px; font-size: 10px; }
+            th, td { padding: 4px 6px; font-size: 9px; }
             .btn-nivel { padding: 6px 10px; font-size: 11px; }
-        }
-
-        /* Tooltip para valores truncados */
-        td[title]:hover {
-            position: relative;
-        }
-        td[title]:hover::after {
-            content: attr(title);
-            position: absolute;
-            left: 0;
-            top: 100%;
-            background: #333;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            white-space: nowrap;
-            z-index: 20;
-            max-width: 300px;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            table { min-width: 600px; }
         }
     </style>
 </head>
@@ -423,7 +414,7 @@
     </div>
 
     <script>
-// Configuración de rutas de archivos CSV relativos (Para GitHub Pages)
+// Configuración de rutas de archivos CSV
 const csvPaths = {
     provincia: './data/provincias.csv',
     distritos: './data/distritos.csv',
@@ -432,29 +423,96 @@ const csvPaths = {
     barrios: './data/barrios.csv'
 };
 
-// Estructura de campos por nivel territorial con todos los campos solicitados
+// ============================================================
+// ESTRUCTURA DE CAMPOS ACTUALIZADA CON TODOS LOS CAMPOS SOLICITADOS
+// ============================================================
 const estructurasDeCampos = {
-    provincia: ['PROV_ID', 'PROV_NOMB', 'PROV_LEY', 'LEY_MOD_P', 'GACETA_P', 'GACE_MOD_P', 'Shape_Leng', 'Shape_Area'],
-    distritos: ['PROV_ID', 'PROV_NOMB', 'DIST_ID', 'DIST_NOMB', 'DIST_CODE', 'DIST_LEY', 'LEY_MOD_D', 'GACETA_D', 'GACE_MOD_D', 'Shape_Leng', 'Shape_Area'],
-    corregimientos: ['PROV_ID', 'PROV_NOMB', 'DIST_ID', 'DIST_NOMB', 'DIST_CODE', 'CORR_ID', 'CORR_NOMB', 'CORR_CODE', 'CORR_LEY', 'LEY_MOD_C', 'GACETA_C', 'GACE_MOD_C', 'REGI_ID', 'Shape_Leng', 'Shape_Area'],
-    poblados: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'CODIGO', 'LUPO_NOMB', 'LUPO_CLASE', 'DESCRIP_ON', 'LUPO_CATE', 'LUPO_TIPO'],
-    barrios: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'BARR_ID', 'CODIGO', 'BARR_NOMB', 'BARR_CLASE', 'DESCRIP_ON']
+    // PROVINCIAS: TODOS los campos solicitados
+    provincia: [
+        'PROV_ID', 'PROV_NOMB', 'PROV_LEY', 'LEY_MOD_P', 
+        'GACETA_P', 'GACE_MOD_P', 'Shape_Leng', 'Shape_Area'
+    ],
+    
+    // DISTRITOS: TODOS los campos solicitados
+    distritos: [
+        'PROV_ID', 'PROV_NOMB', 'DIST_ID', 'DIST_NOMB', 
+        'DIST_CODE', 'DIST_LEY', 'LEY_MOD_D', 
+        'GACETA_D', 'GACE_MOD_D', 'Shape_Leng', 'Shape_Area'
+    ],
+    
+    // CORREGIMIENTOS: TODOS los campos solicitados
+    corregimientos: [
+        'PROV_ID', 'PROV_NOMB', 'DIST_ID', 'DIST_NOMB', 
+        'DIST_CODE', 'CORR_ID', 'CORR_NOMB', 'CORR_CODE',
+        'CORR_LEY', 'LEY_MOD_C', 'GACETA_C', 'GACE_MOD_C',
+        'REGI_ID', 'Shape_Leng', 'Shape_Area'
+    ],
+    
+    // POBLADOS (se mantienen igual)
+    poblados: [
+        'PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 
+        'CODIGO', 'LUPO_NOMB', 'LUPO_CLASE', 'DESCRIP_ON', 
+        'LUPO_CATE', 'LUPO_TIPO'
+    ],
+    
+    // BARRIOS (se mantienen igual)
+    barrios: [
+        'PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 
+        'BARR_ID', 'CODIGO', 'BARR_NOMB', 'BARR_CLASE', 'DESCRIP_ON'
+    ]
 };
 
-// Estado global de la aplicación
+// ============================================================
+// NOMBRES AMIGABLES PARA LAS COLUMNAS (más legibles)
+// ============================================================
+const nombresColumnas = {
+    'PROV_ID': 'ID Prov',
+    'PROV_NOMB': 'Provincia',
+    'PROV_LEY': 'Ley Prov',
+    'LEY_MOD_P': 'Ley Mod Prov',
+    'GACETA_P': 'Gaceta Prov',
+    'GACE_MOD_P': 'Gaceta Mod Prov',
+    'Shape_Leng': 'Longitud',
+    'Shape_Area': 'Área',
+    'DIST_ID': 'ID Dist',
+    'DIST_NOMB': 'Distrito',
+    'DIST_CODE': 'Cód Dist',
+    'DIST_LEY': 'Ley Dist',
+    'LEY_MOD_D': 'Ley Mod Dist',
+    'GACETA_D': 'Gaceta Dist',
+    'GACE_MOD_D': 'Gaceta Mod Dist',
+    'CORR_ID': 'ID Corr',
+    'CORR_NOMB': 'Corregimiento',
+    'CORR_CODE': 'Cód Corr',
+    'CORR_LEY': 'Ley Corr',
+    'LEY_MOD_C': 'Ley Mod Corr',
+    'GACETA_C': 'Gaceta Corr',
+    'GACE_MOD_C': 'Gaceta Mod Corr',
+    'REGI_ID': 'Región ID',
+    'LUPO_ID': 'LUPO ID',
+    'LUPO_NOMB': 'Poblado',
+    'LUPO_CLASE': 'Clase',
+    'LUPO_CATE': 'Categoría',
+    'LUPO_TIPO': 'Tipo',
+    'BARR_ID': 'Barrio ID',
+    'BARR_NOMB': 'Barrio',
+    'BARR_CLASE': 'Clase Barrio',
+    'CODIGO': 'Código',
+    'DESCRIP_ON': 'Descripción'
+};
+
+// Estado global
 let cacheDatos = {};
 let nivelActivo = 'provincia';
 let datosFiltrados = [];
 let ordenAscendente = true;
 let columnaOrden = '';
 
-// Al iniciar, cargar el primer nivel
 window.addEventListener('DOMContentLoaded', () => {
     inicializarContadorVisitas();
     cargarNivelTerritorial(nivelActivo);
 });
 
-// Función para inicializar el contador de visitas usando StaticCounter
 function inicializarContadorVisitas() {
     const el = document.getElementById('visit-count');
     if (!el) return;
@@ -469,16 +527,15 @@ function inicializarContadorVisitas() {
             }
         })
         .catch(err => {
-            console.warn("StaticCounter falló, intentando con localStorage:", err);
-            let visits = localStorage.getItem('panama_visits') || 1;
-            visits = parseInt(visits) + 1;
+            console.warn("StaticCounter falló, usando localStorage:", err);
+            let visits = parseInt(localStorage.getItem('panama_visits') || '1') + 1;
             localStorage.setItem('panama_visits', visits);
             el.innerText = visits.toLocaleString('es-PA');
         });
 }
 
 function cargarNivelTerritorial(nivel) {
-    document.getElementById('contador-registros').innerText = "Cargando datos desde el servidor...";
+    document.getElementById('contador-registros').innerText = "Cargando datos...";
     
     if (cacheDatos[nivel]) {
         procesarYMostrar(nivel);
@@ -495,7 +552,7 @@ function cargarNivelTerritorial(nivel) {
             actualizarSelectoresFiltros();
         },
         error: function(err) {
-            document.getElementById('contador-registros').innerText = "Error al cargar el archivo CSV de: " + nivel;
+            document.getElementById('contador-registros').innerText = "Error al cargar: " + nivel;
             console.error(err);
         }
     });
@@ -504,10 +561,18 @@ function cargarNivelTerritorial(nivel) {
 function procesarYMostrar(nivel) {
     datosFiltrados = [...cacheDatos[nivel]];
     
-    if (nivel === 'provincia') {
+    // Orden inicial por ID principal
+    let idField = '';
+    if (nivel === 'provincia') idField = 'PROV_ID';
+    else if (nivel === 'distritos') idField = 'DIST_ID';
+    else if (nivel === 'corregimientos') idField = 'CORR_ID';
+    else if (nivel === 'poblados') idField = 'LUPO_ID';
+    else if (nivel === 'barrios') idField = 'BARR_ID';
+    
+    if (idField) {
         datosFiltrados.sort((a, b) => {
-            let idA = String(a.PROV_ID || '').trim();
-            let idB = String(b.PROV_ID || '').trim();
+            let idA = String(a[idField] || '').trim();
+            let idB = String(b[idField] || '').trim();
             return idA.localeCompare(idB, undefined, { numeric: true });
         });
     }
@@ -521,47 +586,7 @@ function generarCabecera(nivel) {
     const campos = estructurasDeCampos[nivel];
     let html = '<tr>';
     campos.forEach((campo) => {
-        // Abreviar nombres de campos para mejor visualización
-        let label = campo;
-        // Reemplazos para hacer más legible
-        const replacements = {
-            'PROV_ID': 'Prov ID',
-            'PROV_NOMB': 'Provincia',
-            'PROV_LEY': 'Ley Prov',
-            'LEY_MOD_P': 'Ley Mod Prov',
-            'GACETA_P': 'Gaceta Prov',
-            'GACE_MOD_P': 'Gaceta Mod Prov',
-            'DIST_ID': 'Dist ID',
-            'DIST_NOMB': 'Distrito',
-            'DIST_CODE': 'Cód Dist',
-            'DIST_LEY': 'Ley Dist',
-            'LEY_MOD_D': 'Ley Mod Dist',
-            'GACETA_D': 'Gaceta Dist',
-            'GACE_MOD_D': 'Gaceta Mod Dist',
-            'CORR_ID': 'Corr ID',
-            'CORR_NOMB': 'Corregimiento',
-            'CORR_CODE': 'Cód Corr',
-            'CORR_LEY': 'Ley Corr',
-            'LEY_MOD_C': 'Ley Mod Corr',
-            'GACETA_C': 'Gaceta Corr',
-            'GACE_MOD_C': 'Gaceta Mod Corr',
-            'REGI_ID': 'Región ID',
-            'Shape_Leng': 'Longitud',
-            'Shape_Area': 'Área',
-            'LUPO_ID': 'LUPO ID',
-            'LUPO_NOMB': 'Poblado',
-            'LUPO_CLASE': 'Clase',
-            'LUPO_CATE': 'Categoría',
-            'LUPO_TIPO': 'Tipo',
-            'BARR_ID': 'Barrio ID',
-            'BARR_NOMB': 'Barrio',
-            'BARR_CLASE': 'Clase Barrio',
-            'CODIGO': 'Código',
-            'DESCRIP_ON': 'Descripción',
-            'CORR_LEY': 'Ley Corr'
-        };
-        if (replacements[campo]) label = replacements[campo];
-        
+        const label = nombresColumnas[campo] || campo;
         html += `<th onclick="ordenarTabla('${campo}')">${label} <span id="sort-${campo}"></span></th>`;
     });
     html += '</tr>';
@@ -616,22 +641,6 @@ function aplicarFiltrosYRenderizar() {
         });
     }
 
-    // Ordenar por ID correspondiente
-    baseDatos.sort((a, b) => {
-        let idA = '', idB = '';
-        
-        if (nivelActivo === 'provincia') { idA = a.PROV_ID; idB = b.PROV_ID; }
-        else if (nivelActivo === 'distritos') { idA = a.DIST_ID; idB = b.DIST_ID; }
-        else if (nivelActivo === 'corregimientos') { idA = a.CORR_ID; idB = b.CORR_ID; }
-        else if (nivelActivo === 'poblados') { idA = a.LUPO_ID; idB = b.LUPO_ID; }
-        else if (nivelActivo === 'barrios') { idA = a.BARR_ID; idB = b.BARR_ID; }
-
-        idA = String(idA || '').trim();
-        idB = String(idB || '').trim();
-        
-        return idA.localeCompare(idB, undefined, { numeric: true });
-    });
-
     datosFiltrados = baseDatos;
     renderizarTabla();
 }
@@ -651,14 +660,13 @@ function renderizarTabla() {
         html += '<tr>'; 
         campos.forEach(campo => {
             let valor = fila[campo] || '';
-            // Truncar valores muy largos para evitar saturación
             let displayValor = valor;
             let titulo = '';
-            if (typeof valor === 'string' && valor.length > 25) {
+            if (typeof valor === 'string' && valor.length > 20) {
                 titulo = valor;
-                displayValor = valor.substring(0, 22) + '...';
+                displayValor = valor.substring(0, 18) + '…';
             }
-            html += `<td${titulo ? ` title="${titulo}"` : ''}>${displayValor}</td>`;
+            html += `<td${titulo ? ` title="${titulo.replace(/"/g, '&quot;')}"` : ''}>${displayValor}</td>`;
         });
         html += '</tr>';
     });
@@ -686,7 +694,7 @@ function actualizarSelectoresFiltros() {
             })))
         ].map(s => JSON.parse(s));
         
-        provs.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' }));
+        provs.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
         
         provs.forEach(p => {
             provSelect.options.add(new Option(p.nomb, p.id));
@@ -776,12 +784,12 @@ function ordenarTabla(campo) {
     }
     
     datosFiltrados.sort((a, b) => {
-        let valA = String(a[campo] || '').toLowerCase();
-        let valB = String(b[campo] || '').toLowerCase();
+        let valA = String(a[campo] || '').trim();
+        let valB = String(b[campo] || '').trim();
         
-        // Intentar orden numérico si ambos son números
-        const numA = parseFloat(valA);
-        const numB = parseFloat(valB);
+        // Intentar orden numérico
+        const numA = parseFloat(valA.replace(/,/g, ''));
+        const numB = parseFloat(valB.replace(/,/g, ''));
         if (!isNaN(numA) && !isNaN(numB) && valA !== '' && valB !== '') {
             return ordenAscendente ? numA - numB : numB - numA;
         }
