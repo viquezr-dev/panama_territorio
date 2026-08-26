@@ -642,9 +642,9 @@ function renderizarTabla() {
             
             let displayValor = valor;
             let titulo = '';
-            if (typeof valor === 'string' && valor.length > 20) {
+            if (typeof valor === 'string' && valor.length > 50) {
                 titulo = valor;
-                displayValor = valor.substring(0, 18) + '…';
+                displayValor = valor.substring(0, 45) + '…';
             }
             html += `<td${titulo ? ` title="${titulo.replace(/"/g, '&quot;')}"` : ''}>${displayValor}</td>`;
         });
