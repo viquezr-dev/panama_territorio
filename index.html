@@ -25,6 +25,8 @@
             border-radius: 20px;
             margin-bottom: 25px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .logo-section {
             display: flex;
@@ -200,6 +202,7 @@
         .table-wrapper {
             max-height: 600px;
             overflow-y: auto;
+            overflow-x: auto;
             border-radius: 16px;
             border: 1px solid #f0e5dd;
             margin: 20px 0;
@@ -209,10 +212,15 @@
             border-collapse: collapse;
             font-size: 12px;
             text-align: left;
+            min-width: 600px;
         }
         th, td {
-            padding: 12px 15px;
+            padding: 10px 12px;
             border-bottom: 1px solid #f0e5dd;
+            white-space: nowrap;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         th {
             background-color: #c7e9fb;
@@ -222,12 +230,21 @@
             cursor: pointer;
             font-weight: 600;
             user-select: none;
+            z-index: 10;
         }
         th:hover {
             background-color: #b8dff5;
         }
         tr:nth-child(even) { background-color: #fefaf7; }
         tr:hover { background-color: #fff3e8; }
+        
+        /* Estilo para columnas con valores largos */
+        td.largo {
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         
         .resultados-info {
             text-align: center;
@@ -240,6 +257,78 @@
             padding: 20px;
             font-weight: bold;
             color: #6b5b95;
+        }
+
+        /* Responsive para tablas */
+        @media (max-width: 768px) {
+            .filtro-select {
+                min-width: 100px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .credits {
+                align-items: flex-start;
+                width: 100%;
+            }
+            .filtros-container {
+                flex-direction: column;
+            }
+            .filtro-item {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .filtro-select {
+                flex: 1;
+                min-width: 0;
+            }
+            .selector-nivel {
+                justify-content: center;
+            }
+            .btn-nivel {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+            th, td {
+                padding: 6px 8px;
+                font-size: 11px;
+            }
+            .table-wrapper {
+                max-height: 400px;
+            }
+            .controles-globales {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .container { padding: 15px; }
+            .logo-placeholder { width: 40px; height: 40px; font-size: 12px; }
+            th, td { padding: 4px 6px; font-size: 10px; }
+            .btn-nivel { padding: 6px 10px; font-size: 11px; }
+        }
+
+        /* Tooltip para valores truncados */
+        td[title]:hover {
+            position: relative;
+        }
+        td[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            left: 0;
+            top: 100%;
+            background: #333;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            z-index: 20;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
@@ -334,7 +423,7 @@
     </div>
 
     <script>
-       // Configuración de rutas de archivos CSV relativos (Para GitHub Pages)
+// Configuración de rutas de archivos CSV relativos (Para GitHub Pages)
 const csvPaths = {
     provincia: './data/provincias.csv',
     distritos: './data/distritos.csv',
@@ -343,193 +432,233 @@ const csvPaths = {
     barrios: './data/barrios.csv'
 };
 
-    // Estructura de campos por nivel territorial (Corregido sin espacios)
-    const estructurasDeCampos = {
-        provincia: ['PROV_ID', 'PROV_NOMB'],
-        distritos: ['PROV_ID', 'DIST_ID', 'DIST_NOMB', 'DIST_CODE'],
-        corregimientos: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'CODIGO', 'CORR_NOMB', 'CORR_LEY', 'CORR_CATE', 'DESCRIP_ON'],
-        poblados: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'CODIGO', 'LUPO_NOMB', 'LUPO_CLASE', 'DESCRIP_ON', 'LUPO_CATE', 'LUPO_TIPO'],
-        barrios: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'BARR_ID', 'CODIGO', 'BARR_NOMB', 'BARR_CLASE', 'DESCRIP_ON']
-    };
+// Estructura de campos por nivel territorial con todos los campos solicitados
+const estructurasDeCampos = {
+    provincia: ['PROV_ID', 'PROV_NOMB', 'PROV_LEY', 'LEY_MOD_P', 'GACETA_P', 'GACE_MOD_P', 'Shape_Leng', 'Shape_Area'],
+    distritos: ['PROV_ID', 'PROV_NOMB', 'DIST_ID', 'DIST_NOMB', 'DIST_CODE', 'DIST_LEY', 'LEY_MOD_D', 'GACETA_D', 'GACE_MOD_D', 'Shape_Leng', 'Shape_Area'],
+    corregimientos: ['PROV_ID', 'PROV_NOMB', 'DIST_ID', 'DIST_NOMB', 'DIST_CODE', 'CORR_ID', 'CORR_NOMB', 'CORR_CODE', 'CORR_LEY', 'LEY_MOD_C', 'GACETA_C', 'GACE_MOD_C', 'REGI_ID', 'Shape_Leng', 'Shape_Area'],
+    poblados: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'CODIGO', 'LUPO_NOMB', 'LUPO_CLASE', 'DESCRIP_ON', 'LUPO_CATE', 'LUPO_TIPO'],
+    barrios: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'BARR_ID', 'CODIGO', 'BARR_NOMB', 'BARR_CLASE', 'DESCRIP_ON']
+};
+
+// Estado global de la aplicación
+let cacheDatos = {};
+let nivelActivo = 'provincia';
+let datosFiltrados = [];
+let ordenAscendente = true;
+let columnaOrden = '';
+
+// Al iniciar, cargar el primer nivel
+window.addEventListener('DOMContentLoaded', () => {
+    inicializarContadorVisitas();
+    cargarNivelTerritorial(nivelActivo);
+});
+
+// Función para inicializar el contador de visitas usando StaticCounter
+function inicializarContadorVisitas() {
+    const el = document.getElementById('visit-count');
+    if (!el) return;
     
-    // Estado global de la aplicación
-    let cacheDatos = {};
-    let nivelActivo = 'provincia';
-    let datosFiltrados = [];
-    let ordenAscendente = true;
-    
-    // Al iniciar, cargar el primer nivel
-    window.addEventListener('DOMContentLoaded', () => {
-        inicializarContadorVisitas();
-        cargarNivelTerritorial(nivelActivo);
-    });
-    
-    // Función para inicializar el contador de visitas usando StaticCounter
-    function inicializarContadorVisitas() {
-        // Usar StaticCounter: servicio confiable y gratuito
-        const el = document.getElementById('visit-count');
-        if (!el) return;
-        
-        // StaticCounter genera un badge que actualiza visitas automáticamente
-        fetch(`https://api.staticcounter.com/v3/staticcounter?user=d1c14f6f37f6402b&key=panama_visor&format=json`)
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.counter && data.counter.count) {
-                    el.innerText = Number(data.counter.count).toLocaleString('es-PA');
-                } else {
-                    throw new Error("Respuesta inválida");
-                }
-            })
-            .catch(err => {
-                console.warn("StaticCounter falló, intentando con localStorage:", err);
-                // Respaldo: localStorage
-                let visits = localStorage.getItem('panama_visits') || 1;
-                visits = parseInt(visits) + 1;
-                localStorage.setItem('panama_visits', visits);
-                el.innerText = visits.toLocaleString('es-PA');
-            });
-    }
-    
-    function cargarNivelTerritorial(nivel) {
-        document.getElementById('contador-registros').innerText = "Cargando datos desde el servidor...";
-        
-        if (cacheDatos[nivel]) {
-            procesarYMostrar(nivel);
-            return;
-        }
-    
-        Papa.parse(csvPaths[nivel], {
-            download: true,
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                cacheDatos[nivel] = results.data;
-                procesarYMostrar(nivel);
-                actualizarSelectoresFiltros();
-            },
-            error: function(err) {
-                document.getElementById('contador-registros').innerText = "Error al cargar el archivo CSV de: " + nivel;
-                console.error(err);
+    fetch(`https://api.staticcounter.com/v3/staticcounter?user=d1c14f6f37f6402b&key=panama_visor&format=json`)
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.counter && data.counter.count) {
+                el.innerText = Number(data.counter.count).toLocaleString('es-PA');
+            } else {
+                throw new Error("Respuesta inválida");
             }
+        })
+        .catch(err => {
+            console.warn("StaticCounter falló, intentando con localStorage:", err);
+            let visits = localStorage.getItem('panama_visits') || 1;
+            visits = parseInt(visits) + 1;
+            localStorage.setItem('panama_visits', visits);
+            el.innerText = visits.toLocaleString('es-PA');
         });
+}
+
+function cargarNivelTerritorial(nivel) {
+    document.getElementById('contador-registros').innerText = "Cargando datos desde el servidor...";
+    
+    if (cacheDatos[nivel]) {
+        procesarYMostrar(nivel);
+        return;
     }
-    
-    function procesarYMostrar(nivel) {
-        // Almacenar copia de los datos cargados
-        datosFiltrados = [...cacheDatos[nivel]];
-        
-        // Si entramos a provincias, forzar el orden ascendente numérico de una vez
-        if (nivel === 'provincia') {
-            datosFiltrados.sort((a, b) => {
-                let idA = String(a.PROV_ID || '').trim();
-                let idB = String(b.PROV_ID || '').trim();
-                return idA.localeCompare(idB, undefined, { numeric: true });
-            });
+
+    Papa.parse(csvPaths[nivel], {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+            cacheDatos[nivel] = results.data;
+            procesarYMostrar(nivel);
+            actualizarSelectoresFiltros();
+        },
+        error: function(err) {
+            document.getElementById('contador-registros').innerText = "Error al cargar el archivo CSV de: " + nivel;
+            console.error(err);
         }
+    });
+}
+
+function procesarYMostrar(nivel) {
+    datosFiltrados = [...cacheDatos[nivel]];
     
-        generarCabecera(nivel);
-        aplicarFiltrosYRenderizar();
-    }
-    
-    function generarCabecera(nivel) {
-        const head = document.getElementById('tabla-head');
-        const campos = estructurasDeCampos[nivel];
-        let html = '<tr>';
-        campos.forEach((campo) => {
-            html += `<th onclick="ordenarTabla('${campo}')">${campo} <span id="sort-${campo}"></span></th>`;
-        });
-        html += '</tr>';
-        head.innerHTML = html;
-    }
-    
-    function cambiarNivel(nuevoNivel) {
-        nivelActivo = nuevoNivel;
-        
-        const botones = document.querySelectorAll('.btn-nivel');
-        const mapeoIndices = { provincia: 0, distritos: 1, corregimientos: 2, poblados: 3, barrios: 4 };
-        
-        botones.forEach(b => b.classList.remove('active'));
-        if (mapeoIndices[nuevoNivel] !== undefined) {
-            botones[mapeoIndices[nuevoNivel]].classList.add('active');
-        }
-    
-        // Mostrar/Ocultar selectores condicionales según nivel jerárquico elegido
-        document.getElementById('div-filtro-prov').style.display = nuevoNivel !== 'provincia' ? 'block' : 'none';
-        document.getElementById('div-filtro-dist').style.display = ['corregimientos', 'poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
-        document.getElementById('div-filtro-corr').style.display = ['poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
-        document.getElementById('div-filtro-lupo').style.display = nuevoNivel === 'barrios' ? 'block' : 'none';
-        document.getElementById('leyenda-poblados').style.display = nuevoNivel === 'poblados' ? 'block' : 'none';
-        cargarNivelTerritorial(nuevoNivel);
-    }
-    
-    function aplicarFiltrosYRenderizar() {
-        let baseDatos = cacheDatos[nivelActivo] ? [...cacheDatos[nivelActivo]] : [];
-    
-        const pVal = document.getElementById('filtro-provincia').value;
-        const dVal = document.getElementById('filtro-distrito').value;
-        const cVal = document.getElementById('filtro-corregimiento').value;
-        const lVal = document.getElementById('filtro-poblado').value;
-    
-        // 1. Filtrado Jerárquico en Cascada
-        if (pVal && nivelActivo !== 'provincia') {
-            baseDatos = baseDatos.filter(r => r.PROV_ID === pVal);
-        }
-        if (dVal && ['distritos', 'corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
-            baseDatos = baseDatos.filter(r => r.DIST_ID === dVal);
-        }
-        if (cVal && ['corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
-            baseDatos = baseDatos.filter(r => r.CORR_ID === cVal);
-        }
-        if (lVal && ['poblados', 'barrios'].includes(nivelActivo)) {
-            baseDatos = baseDatos.filter(r => r.LUPO_ID === lVal);
-        }
-    
-        // 2. Filtrado por barra de búsqueda global
-        const busqueda = document.getElementById('search-input').value.toLowerCase().trim();
-        if (busqueda !== "") {
-            const campos = estructurasDeCampos[nivelActivo];
-            baseDatos = baseDatos.filter(fila => {
-                return campos.some(campo => String(fila[campo] || '').toLowerCase().includes(busqueda));
-            });
-        }
-    
-        // 3. ¡NUEVO Y DEFINITIVO!: Ordenar la tabla resultante ascendentemente para CUALQUIER nivel
-        baseDatos.sort((a, b) => {
-            let idA = '', idB = '';
-            
-            // Mapeamos el ID correspondiente según el nivel que el usuario está viendo en pantalla
-            if (nivelActivo === 'provincia') { idA = a.PROV_ID; idB = b.PROV_ID; }
-            else if (nivelActivo === 'distritos') { idA = a.DIST_ID; idB = b.DIST_ID; }
-            else if (nivelActivo === 'corregimientos') { idA = a.CORR_ID; idB = b.CORR_ID; }
-            else if (nivelActivo === 'poblados') { idA = a.LUPO_ID; idB = b.LUPO_ID; }
-            else if (nivelActivo === 'barrios') { idA = a.BARR_ID; idB = b.BARR_ID; }
-    
-            idA = String(idA || '').trim();
-            idB = String(idB || '').trim();
-            
+    if (nivel === 'provincia') {
+        datosFiltrados.sort((a, b) => {
+            let idA = String(a.PROV_ID || '').trim();
+            let idB = String(b.PROV_ID || '').trim();
             return idA.localeCompare(idB, undefined, { numeric: true });
         });
-    
-        datosFiltrados = baseDatos;
-        renderizarTabla();
     }
+
+    generarCabecera(nivel);
+    aplicarFiltrosYRenderizar();
+}
+
+function generarCabecera(nivel) {
+    const head = document.getElementById('tabla-head');
+    const campos = estructurasDeCampos[nivel];
+    let html = '<tr>';
+    campos.forEach((campo) => {
+        // Abreviar nombres de campos para mejor visualización
+        let label = campo;
+        // Reemplazos para hacer más legible
+        const replacements = {
+            'PROV_ID': 'Prov ID',
+            'PROV_NOMB': 'Provincia',
+            'PROV_LEY': 'Ley Prov',
+            'LEY_MOD_P': 'Ley Mod Prov',
+            'GACETA_P': 'Gaceta Prov',
+            'GACE_MOD_P': 'Gaceta Mod Prov',
+            'DIST_ID': 'Dist ID',
+            'DIST_NOMB': 'Distrito',
+            'DIST_CODE': 'Cód Dist',
+            'DIST_LEY': 'Ley Dist',
+            'LEY_MOD_D': 'Ley Mod Dist',
+            'GACETA_D': 'Gaceta Dist',
+            'GACE_MOD_D': 'Gaceta Mod Dist',
+            'CORR_ID': 'Corr ID',
+            'CORR_NOMB': 'Corregimiento',
+            'CORR_CODE': 'Cód Corr',
+            'CORR_LEY': 'Ley Corr',
+            'LEY_MOD_C': 'Ley Mod Corr',
+            'GACETA_C': 'Gaceta Corr',
+            'GACE_MOD_C': 'Gaceta Mod Corr',
+            'REGI_ID': 'Región ID',
+            'Shape_Leng': 'Longitud',
+            'Shape_Area': 'Área',
+            'LUPO_ID': 'LUPO ID',
+            'LUPO_NOMB': 'Poblado',
+            'LUPO_CLASE': 'Clase',
+            'LUPO_CATE': 'Categoría',
+            'LUPO_TIPO': 'Tipo',
+            'BARR_ID': 'Barrio ID',
+            'BARR_NOMB': 'Barrio',
+            'BARR_CLASE': 'Clase Barrio',
+            'CODIGO': 'Código',
+            'DESCRIP_ON': 'Descripción',
+            'CORR_LEY': 'Ley Corr'
+        };
+        if (replacements[campo]) label = replacements[campo];
+        
+        html += `<th onclick="ordenarTabla('${campo}')">${label} <span id="sort-${campo}"></span></th>`;
+    });
+    html += '</tr>';
+    head.innerHTML = html;
+}
+
+function cambiarNivel(nuevoNivel) {
+    nivelActivo = nuevoNivel;
     
-    function renderizarTabla() {
-        const tbody = document.getElementById('tabla-body');
+    const botones = document.querySelectorAll('.btn-nivel');
+    const mapeoIndices = { provincia: 0, distritos: 1, corregimientos: 2, poblados: 3, barrios: 4 };
+    
+    botones.forEach(b => b.classList.remove('active'));
+    if (mapeoIndices[nuevoNivel] !== undefined) {
+        botones[mapeoIndices[nuevoNivel]].classList.add('active');
+    }
+
+    document.getElementById('div-filtro-prov').style.display = nuevoNivel !== 'provincia' ? 'block' : 'none';
+    document.getElementById('div-filtro-dist').style.display = ['corregimientos', 'poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
+    document.getElementById('div-filtro-corr').style.display = ['poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
+    document.getElementById('div-filtro-lupo').style.display = nuevoNivel === 'barrios' ? 'block' : 'none';
+    document.getElementById('leyenda-poblados').style.display = nuevoNivel === 'poblados' ? 'block' : 'none';
+    cargarNivelTerritorial(nuevoNivel);
+}
+
+function aplicarFiltrosYRenderizar() {
+    let baseDatos = cacheDatos[nivelActivo] ? [...cacheDatos[nivelActivo]] : [];
+
+    const pVal = document.getElementById('filtro-provincia').value;
+    const dVal = document.getElementById('filtro-distrito').value;
+    const cVal = document.getElementById('filtro-corregimiento').value;
+    const lVal = document.getElementById('filtro-poblado').value;
+
+    if (pVal && nivelActivo !== 'provincia') {
+        baseDatos = baseDatos.filter(r => r.PROV_ID === pVal);
+    }
+    if (dVal && ['distritos', 'corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
+        baseDatos = baseDatos.filter(r => r.DIST_ID === dVal);
+    }
+    if (cVal && ['corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
+        baseDatos = baseDatos.filter(r => r.CORR_ID === cVal);
+    }
+    if (lVal && ['poblados', 'barrios'].includes(nivelActivo)) {
+        baseDatos = baseDatos.filter(r => r.LUPO_ID === lVal);
+    }
+
+    const busqueda = document.getElementById('search-input').value.toLowerCase().trim();
+    if (busqueda !== "") {
         const campos = estructurasDeCampos[nivelActivo];
+        baseDatos = baseDatos.filter(fila => {
+            return campos.some(campo => String(fila[campo] || '').toLowerCase().includes(busqueda));
+        });
+    }
+
+    // Ordenar por ID correspondiente
+    baseDatos.sort((a, b) => {
+        let idA = '', idB = '';
         
-        if (datosFiltrados.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="${campos.length}" style="text-align:center; padding:30px; color:#999;">No se encontraron registros.</td></tr>`;
-            document.getElementById('contador-registros').innerText = "Mostrando 0 registros";
-            return;
-        }
+        if (nivelActivo === 'provincia') { idA = a.PROV_ID; idB = b.PROV_ID; }
+        else if (nivelActivo === 'distritos') { idA = a.DIST_ID; idB = b.DIST_ID; }
+        else if (nivelActivo === 'corregimientos') { idA = a.CORR_ID; idB = b.CORR_ID; }
+        else if (nivelActivo === 'poblados') { idA = a.LUPO_ID; idB = b.LUPO_ID; }
+        else if (nivelActivo === 'barrios') { idA = a.BARR_ID; idB = b.BARR_ID; }
+
+        idA = String(idA || '').trim();
+        idB = String(idB || '').trim();
+        
+        return idA.localeCompare(idB, undefined, { numeric: true });
+    });
+
+    datosFiltrados = baseDatos;
+    renderizarTabla();
+}
+
+function renderizarTabla() {
+    const tbody = document.getElementById('tabla-body');
+    const campos = estructurasDeCampos[nivelActivo];
     
-        let html = '';
+    if (datosFiltrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="${campos.length}" style="text-align:center; padding:30px; color:#999;">No se encontraron registros.</td></tr>`;
+        document.getElementById('contador-registros').innerText = "Mostrando 0 registros";
+        return;
+    }
+
+    let html = '';
     datosFiltrados.forEach(fila => {
-        
         html += '<tr>'; 
         campos.forEach(campo => {
-            html += `<td>${fila[campo] || ''}</td>`;
+            let valor = fila[campo] || '';
+            // Truncar valores muy largos para evitar saturación
+            let displayValor = valor;
+            let titulo = '';
+            if (typeof valor === 'string' && valor.length > 25) {
+                titulo = valor;
+                displayValor = valor.substring(0, 22) + '...';
+            }
+            html += `<td${titulo ? ` title="${titulo}"` : ''}>${displayValor}</td>`;
         });
         html += '</tr>';
     });
@@ -537,162 +666,156 @@ const csvPaths = {
     tbody.innerHTML = html;
     document.getElementById('contador-registros').innerText = `Mostrando ${datosFiltrados.length} registros`;
 }
+
+function filtrarTabla() {
+    aplicarFiltrosYRenderizar();
+}
+
+function actualizarSelectoresFiltros() {
+    const provSelect = document.getElementById('filtro-provincia');
+    if (!provSelect) return;
     
-    function filtrarTabla() {
-        aplicarFiltrosYRenderizar();
-    }
-    
-    function actualizarSelectoresFiltros() {
-        const provSelect = document.getElementById('filtro-provincia');
-        if (!provSelect) return;
+    if (provSelect.options.length > 1) return;
+
+    if (cacheDatos['provincia']) {
+        const provs = [...new Set(cacheDatos['provincia']
+            .filter(r => r.PROV_ID && r.PROV_NOMB)
+            .map(r => JSON.stringify({
+                id: String(r.PROV_ID).trim(), 
+                nomb: String(r.PROV_NOMB).trim()
+            })))
+        ].map(s => JSON.parse(s));
         
-        // Si ya tiene cargadas las provincias (más de la opción "Todos"), salimos para no duplicar
-        if (provSelect.options.length > 1) return;
-    
-        if (cacheDatos['provincia']) {
-            // Mapeamos asegurando limpiar cualquier espacio en blanco invisible de los datos (.trim())
-            const provs = [...new Set(cacheDatos['provincia']
-                .filter(r => r.PROV_ID && r.PROV_NOMB)
-                .map(r => JSON.stringify({
-                    id: String(r.PROV_ID).trim(), 
-                    nomb: String(r.PROV_NOMB).trim()
-                })))
-            ].map(s => JSON.parse(s));
-            
-            // ORDENAR ASCENDENTE ESTRICTO POR ID (01, 02, 03... al abrir la página)
-            provs.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' }));
-            
-            // Llenar el selector mostrando solo el nombre
-            provs.forEach(p => {
-                provSelect.options.add(new Option(p.nomb, p.id));
-            });
-        }
-    }
-    
-    function filtrarCascada(tipoFiltro) {
-        const pVal = document.getElementById('filtro-provincia').value;
+        provs.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' }));
         
-        if (tipoFiltro === 'provincia') {
-            rebuildSelect('filtro-distrito');
-            rebuildSelect('filtro-corregimiento');
-            rebuildSelect('filtro-poblado');
-            
-            if (pVal && cacheDatos['distritos']) {
-                const distSelect = document.getElementById('filtro-distrito');
-                const filtrados = cacheDatos['distritos'].filter(r => r.PROV_ID === pVal);
-                
-                // Convertimos a objetos para poder ordenarlos
-                let unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.DIST_ID, nomb: r.DIST_NOMB})))].map(s => JSON.parse(s));
-                
-                // ORDENAR ASCENDENTE POR ID
-                unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
-                
-                // LLENAR CON FORMATO "ID - NOMBRE"
-                unicos.forEach(d => {
-                    distSelect.options.add(new Option(`${d.id} - ${d.nomb}`, d.id));
-                });
-            }
-        } 
-        else if (tipoFiltro === 'distrito') {
-            rebuildSelect('filtro-corregimiento');
-            rebuildSelect('filtro-poblado');
-            const dVal = document.getElementById('filtro-distrito').value;
-            
-            if (pVal && dVal && cacheDatos['corregimientos']) {
-                const corrSelect = document.getElementById('filtro-corregimiento');
-                const filtrados = cacheDatos['corregimientos'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal);
-                
-                let unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.CORR_ID, nomb: r.CORR_NOMB})))].map(s => JSON.parse(s));
-                
-                // ORDENAR ASCENDENTE POR ID
-                unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
-                
-                // LLENAR CON FORMATO "ID - NOMBRE"
-                unicos.forEach(c => {
-                    corrSelect.options.add(new Option(`${c.id} - ${c.nomb}`, c.id));
-                });
-            }
-        }
-        else if (tipoFiltro === 'corregimiento') {
-            rebuildSelect('filtro-poblado');
-            const dVal = document.getElementById('filtro-distrito').value;
-            const cVal = document.getElementById('filtro-corregimiento').value;
-    
-            if (pVal && dVal && cVal && cacheDatos['poblados']) {
-                const lupoSelect = document.getElementById('filtro-poblado');
-                const filtrados = cacheDatos['poblados'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal && r.CORR_ID === cVal);
-                
-                let unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.LUPO_ID, nomb: r.LUPO_NOMB})))].map(s => JSON.parse(s));
-                
-                // ORDENAR ASCENDENTE POR ID
-                unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
-                
-                // LLENAR CON FORMATO "ID - NOMBRE"
-                unicos.forEach(l => {
-                    lupoSelect.options.add(new Option(`${l.id} - ${l.nomb}`, l.id));
-                });
-            }
-        }
-    
-        const nivelesAsegurar = ['distritos', 'corregimientos', 'poblados'];
-        nivelesAsegurar.forEach(n => {
-            if(!cacheDatos[n]) {
-                Papa.parse(csvPaths[n], {
-                    download: true, header: true, skipEmptyLines: true,
-                    complete: (res) => { cacheDatos[n] = res.data; actualizarSelectoresFiltros(); }
-                });
-            }
+        provs.forEach(p => {
+            provSelect.options.add(new Option(p.nomb, p.id));
         });
-    
-        aplicarFiltrosYRenderizar();
     }
+}
+
+function filtrarCascada(tipoFiltro) {
+    const pVal = document.getElementById('filtro-provincia').value;
     
-    function rebuildSelect(id) {
-        const sel = document.getElementById(id);
-        sel.innerHTML = '<option value="">Todos</option>';
-    }
-    
-    function ordenarTabla(campo) {
-        ordenAscendente = !ordenAscendente;
-        datosFiltrados.sort((a, b) => {
-            let valA = String(a[campo] || '').toLowerCase();
-            let valB = String(b[campo] || '').toLowerCase();
-            
-            if (!isNaN(valA) && !isNaN(valB) && valA !== '' && valB !== '') {
-                return ordenAscendente ? valA - valB : valB - valA;
-            }
-            
-            return ordenAscendente ? valA.localeCompare(valB) : valB.localeCompare(valA);
-        });
-        renderizarTabla();
-    }
-    
-    function limpiarFiltros() {
-        document.getElementById('filtro-provincia').value = "";
+    if (tipoFiltro === 'provincia') {
         rebuildSelect('filtro-distrito');
         rebuildSelect('filtro-corregimiento');
         rebuildSelect('filtro-poblado');
-        rebuildSelect('filtro-barrio'); // Agregado para limpiar completamente
-        document.getElementById('search-input').value = "";
-        aplicarFiltrosYRenderizar();
+        
+        if (pVal && cacheDatos['distritos']) {
+            const distSelect = document.getElementById('filtro-distrito');
+            const filtrados = cacheDatos['distritos'].filter(r => r.PROV_ID === pVal);
+            
+            let unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.DIST_ID, nomb: r.DIST_NOMB})))].map(s => JSON.parse(s));
+            unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+            
+            unicos.forEach(d => {
+                distSelect.options.add(new Option(`${d.id} - ${d.nomb}`, d.id));
+            });
+        }
+    } 
+    else if (tipoFiltro === 'distrito') {
+        rebuildSelect('filtro-corregimiento');
+        rebuildSelect('filtro-poblado');
+        const dVal = document.getElementById('filtro-distrito').value;
+        
+        if (pVal && dVal && cacheDatos['corregimientos']) {
+            const corrSelect = document.getElementById('filtro-corregimiento');
+            const filtrados = cacheDatos['corregimientos'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal);
+            
+            let unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.CORR_ID, nomb: r.CORR_NOMB})))].map(s => JSON.parse(s));
+            unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+            
+            unicos.forEach(c => {
+                corrSelect.options.add(new Option(`${c.id} - ${c.nomb}`, c.id));
+            });
+        }
+    }
+    else if (tipoFiltro === 'corregimiento') {
+        rebuildSelect('filtro-poblado');
+        const dVal = document.getElementById('filtro-distrito').value;
+        const cVal = document.getElementById('filtro-corregimiento').value;
+
+        if (pVal && dVal && cVal && cacheDatos['poblados']) {
+            const lupoSelect = document.getElementById('filtro-poblado');
+            const filtrados = cacheDatos['poblados'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal && r.CORR_ID === cVal);
+            
+            let unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.LUPO_ID, nomb: r.LUPO_NOMB})))].map(s => JSON.parse(s));
+            unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+            
+            unicos.forEach(l => {
+                lupoSelect.options.add(new Option(`${l.id} - ${l.nomb}`, l.id));
+            });
+        }
+    }
+
+    const nivelesAsegurar = ['distritos', 'corregimientos', 'poblados'];
+    nivelesAsegurar.forEach(n => {
+        if(!cacheDatos[n]) {
+            Papa.parse(csvPaths[n], {
+                download: true, header: true, skipEmptyLines: true,
+                complete: (res) => { cacheDatos[n] = res.data; actualizarSelectoresFiltros(); }
+            });
+        }
+    });
+
+    aplicarFiltrosYRenderizar();
+}
+
+function rebuildSelect(id) {
+    const sel = document.getElementById(id);
+    sel.innerHTML = '<option value="">Todos</option>';
+}
+
+function ordenarTabla(campo) {
+    if (columnaOrden === campo) {
+        ordenAscendente = !ordenAscendente;
+    } else {
+        columnaOrden = campo;
+        ordenAscendente = true;
     }
     
-    function exportarCSV() {
-        if(datosFiltrados.length === 0) return;
-        const campos = estructurasDeCampos[nivelActivo];
-        const csvContent = Papa.unparse({
-            fields: campos,
-            data: datosFiltrados
-        });
+    datosFiltrados.sort((a, b) => {
+        let valA = String(a[campo] || '').toLowerCase();
+        let valB = String(b[campo] || '').toLowerCase();
         
-        const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.setAttribute("download", `exportacion_${nivelActivo}_panama.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-    </script>
+        // Intentar orden numérico si ambos son números
+        const numA = parseFloat(valA);
+        const numB = parseFloat(valB);
+        if (!isNaN(numA) && !isNaN(numB) && valA !== '' && valB !== '') {
+            return ordenAscendente ? numA - numB : numB - numA;
+        }
+        
+        return ordenAscendente ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    });
+    renderizarTabla();
+}
+
+function limpiarFiltros() {
+    document.getElementById('filtro-provincia').value = "";
+    rebuildSelect('filtro-distrito');
+    rebuildSelect('filtro-corregimiento');
+    rebuildSelect('filtro-poblado');
+    document.getElementById('search-input').value = "";
+    aplicarFiltrosYRenderizar();
+}
+
+function exportarCSV() {
+    if(datosFiltrados.length === 0) return;
+    const campos = estructurasDeCampos[nivelActivo];
+    const csvContent = Papa.unparse({
+        fields: campos,
+        data: datosFiltrados
+    });
+    
+    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", `exportacion_${nivelActivo}_panama.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+</script>
 </body>
 </html>
