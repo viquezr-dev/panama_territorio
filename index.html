@@ -9,10 +9,10 @@
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             background: linear-gradient(135deg, #f0f4e8 0%, #ffe6e6 100%);
             color: #4a4a4a;
-            font-size: 14px;
+            font-size: 13px;
             min-height: 100vh;
         }
         .header {
@@ -20,21 +20,21 @@
             justify-content: space-between;
             align-items: center;
             background: rgba(255,255,255,0.95);
-            padding: 15px 25px;
-            border-radius: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            padding: 8px 18px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 6px;
         }
         .logo-section {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
         .logo-placeholder {
-            width: 50px;
-            height: 50px;
+            width: 36px;
+            height: 36px;
             background: #6b5b95;
             border-radius: 50%;
             display: flex;
@@ -42,14 +42,21 @@
             justify-content: center;
             color: white;
             font-weight: bold;
+            font-size: 12px;
+        }
+        .logo-section strong {
+            font-size: 14px;
+        }
+        .logo-section span {
+            font-size: 10px;
         }
         .credits {
             text-align: right;
-            font-size: 12px;
+            font-size: 10px;
             color: #7a7a7a;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
             align-items: flex-end;
         }
         .credits a {
@@ -60,67 +67,66 @@
         .visitor-badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
+            gap: 6px;
+            padding: 3px 10px;
             background: #f0f2f5;
-            border-radius: 20px;
+            border-radius: 16px;
             border: 1px solid #e0e2e6;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             color: #6b5b95;
-        }
-        .visitor-count {
-            color: #6b5b95;
-            font-weight: 700;
         }
         .container {
             max-width: 98%;
             margin: 0 auto;
             background: white;
-            padding: 25px;
-            border-radius: 24px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+            padding: 12px 18px;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
         }
         h1 {
             color: #6b5b95;
             text-align: center;
-            border-bottom: 3px solid #f7c1c1;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
+            border-bottom: 2px solid #f7c1c1;
+            padding-bottom: 6px;
+            margin-bottom: 10px;
             font-weight: 600;
+            font-size: 18px;
         }
         .descripcion-box {
             background: #fff7e6;
             border: 1px solid #ffe0b5;
-            border-radius: 16px;
-            padding: 15px 20px;
-            margin: 15px 0;
-            font-size: 13px;
+            border-radius: 12px;
+            padding: 6px 14px;
+            margin: 6px 0;
+            font-size: 11px;
             color: #b46f3a;
+            display: none; /* Oculto por defecto, cambia a 'block' si lo quieres visible */
         }
         .toolbar {
             background: #fef9f4;
-            padding: 20px;
-            border-radius: 20px;
-            margin-bottom: 25px;
+            padding: 10px 14px;
+            border-radius: 14px;
+            margin-bottom: 12px;
             border: 1px solid #ffe5cc;
         }
         .nivel-section {
-            margin-bottom: 20px;
+            margin-bottom: 8px;
         }
         .selector-nivel {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         .btn-nivel {
-            padding: 10px 20px;
+            padding: 5px 12px;
             background: #e0f2fe;
             color: #0369a1;
             border: 2px solid #bae6fd;
-            border-radius: 30px;
+            border-radius: 20px;
             cursor: pointer;
             font-weight: 600;
+            font-size: 11px;
             transition: all 0.2s ease;
         }
         .btn-nivel.active {
@@ -131,44 +137,44 @@
         .filtros-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 6px;
         }
         .filtro-item {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
             background: white;
-            padding: 8px 15px;
-            border-radius: 40px;
+            padding: 3px 10px;
+            border-radius: 30px;
             border: 1px solid #f0cfb0;
         }
         .filtro-item label {
             font-weight: 600;
             color: #9b7b5c;
-            font-size: 12px;
+            font-size: 10px;
         }
         .filtro-select {
-            padding: 6px 10px;
+            padding: 3px 6px;
             border: 1px solid #f0cfb0;
-            border-radius: 20px;
-            font-size: 12px;
+            border-radius: 16px;
+            font-size: 10px;
             background: white;
-            min-width: 150px;
+            min-width: 100px;
             outline: none;
         }
         .controles-globales {
             display: flex;
-            gap: 12px;
-            margin-top: 15px;
+            gap: 8px;
+            margin-top: 6px;
             flex-wrap: wrap;
         }
         .btn-global {
-            padding: 8px 18px;
+            padding: 4px 12px;
             border: none;
-            border-radius: 30px;
+            border-radius: 20px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 500;
             transition: all 0.2s ease;
         }
@@ -185,39 +191,39 @@
         
         .search-box {
             width: 100%;
-            padding: 12px 20px;
+            padding: 6px 14px;
             box-sizing: border-box;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
             border: 1px solid #f0cfb0;
-            border-radius: 30px;
-            font-size: 14px;
+            border-radius: 20px;
+            font-size: 12px;
             transition: all 0.2s ease;
         }
         .search-box:focus {
             outline: none;
             border-color: #6b5b95;
-            box-shadow: 0 0 0 3px rgba(107, 91, 149, 0.2);
+            box-shadow: 0 0 0 2px rgba(107, 91, 149, 0.15);
         }
         .table-wrapper {
-            max-height: 600px;
+            max-height: 550px;
             overflow-y: auto;
             overflow-x: auto;
-            border-radius: 16px;
+            border-radius: 12px;
             border: 1px solid #f0e5dd;
-            margin: 20px 0;
+            margin: 8px 0;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 11px;
+            font-size: 10px;
             text-align: left;
-            min-width: 1200px;
+            min-width: 1000px;
         }
         th, td {
-            padding: 8px 10px;
+            padding: 5px 8px;
             border-bottom: 1px solid #f0e5dd;
             white-space: nowrap;
-            max-width: 150px;
+            max-width: 140px;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -230,7 +236,8 @@
             font-weight: 600;
             user-select: none;
             z-index: 10;
-            font-size: 10px;
+            font-size: 9px;
+            padding: 5px 6px;
         }
         th:hover {
             background-color: #b8dff5;
@@ -245,12 +252,12 @@
             top: 100%;
             background: #333;
             color: white;
-            padding: 4px 8px;
+            padding: 3px 8px;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 10px;
             white-space: nowrap;
             z-index: 20;
-            max-width: 400px;
+            max-width: 350px;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -260,66 +267,44 @@
         
         .resultados-info {
             text-align: center;
-            margin: 15px 0;
+            margin: 6px 0;
             font-weight: 600;
+            font-size: 11px;
             color: #8b6b4d;
         }
         .loading {
             text-align: center;
-            padding: 20px;
+            padding: 10px;
             font-weight: bold;
             color: #6b5b95;
+            font-size: 12px;
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
-            .filtro-select {
-                min-width: 100px;
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .credits {
-                align-items: flex-start;
-                width: 100%;
-            }
-            .filtros-container {
-                flex-direction: column;
-            }
-            .filtro-item {
-                width: 100%;
-                justify-content: space-between;
-            }
-            .filtro-select {
-                flex: 1;
-                min-width: 0;
-            }
-            .selector-nivel {
-                justify-content: center;
-            }
-            .btn-nivel {
-                padding: 8px 14px;
-                font-size: 12px;
-            }
-            th, td {
-                padding: 6px 8px;
-                font-size: 10px;
-            }
-            .table-wrapper {
-                max-height: 400px;
-            }
-            .controles-globales {
-                justify-content: center;
-            }
+            .filtro-select { min-width: 80px; font-size: 9px; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .credits { align-items: flex-start; width: 100%; }
+            .filtros-container { flex-direction: column; }
+            .filtro-item { width: 100%; justify-content: space-between; }
+            .filtro-select { flex: 1; min-width: 0; }
+            .selector-nivel { justify-content: center; }
+            .btn-nivel { padding: 4px 10px; font-size: 10px; }
+            th, td { padding: 4px 6px; font-size: 9px; }
+            .table-wrapper { max-height: 350px; }
+            .controles-globales { justify-content: center; }
+            h1 { font-size: 16px; }
         }
         
         @media (max-width: 480px) {
-            body { padding: 10px; }
-            .container { padding: 15px; }
-            .logo-placeholder { width: 40px; height: 40px; font-size: 12px; }
-            th, td { padding: 4px 6px; font-size: 9px; }
-            .btn-nivel { padding: 6px 10px; font-size: 11px; }
-            table { min-width: 600px; }
+            body { padding: 6px; }
+            .container { padding: 10px; }
+            .logo-placeholder { width: 30px; height: 30px; font-size: 10px; }
+            .logo-section strong { font-size: 12px; }
+            th, td { padding: 3px 5px; font-size: 8px; }
+            .btn-nivel { padding: 3px 8px; font-size: 9px; }
+            table { min-width: 500px; }
+            .search-box { font-size: 11px; padding: 5px 12px; }
         }
     </style>
 </head>
@@ -329,8 +314,8 @@
         <div class="logo-section">
             <div class="logo-placeholder">PA</div>
             <div>
-                <strong style="font-size: 16px; color: #6b5b95;">PANAMÁ</strong><br>
-                <span style="font-size: 12px; color: #7a7a7a;">Estructura Territorial</span>
+                <strong>PANAMÁ</strong><br>
+                <span>Estructura Territorial</span>
             </div>
         </div>
         <div class="credits">
@@ -342,17 +327,14 @@
     </div>
 
     <div class="container">
-        <h1>Explorador de Datos Territoriales de Panamá</h1>
+        <h1>Explorador de Datos Territoriales</h1>
         
         <div class="descripcion-box">
-            Secciona el nivel territorial requerido. Las opciones de filtrado se actualizarán en cascada de acuerdo a tu selección jerárquica.
+            Secciona el nivel territorial requerido. Las opciones de filtrado se actualizarán en cascada.
         </div>
 
-        <div id="leyenda-poblados" class="descripcion-box" style="display: none; background: #e0f2fe; border: 1px solid #bae6fd; color: #0369a1;">
-            <strong>📋 Descripción del Patrón para Poblados:</strong><br>
-            <span style="margin-right: 15px;"><strong>🔹 LUPO_CLASE:</strong> 1-CABECERA, 2-POBLADO COMPLETO, 3-POBLADO PARTE, 4-CABECERA PARTE (Mixto)</span><br>
-            <span style="margin-right: 15px;"><strong>🔍 LUPO_TIPO:</strong> 1-URBANO, 2-RURAL, 3-INDIGENA</span><br>
-            <span><strong>🔍 LUPO_CATE:</strong> 1-POBLADO, 2-SITIO</span>
+        <div id="leyenda-poblados" class="descripcion-box" style="display: none; background: #e0f2fe; border: 1px solid #bae6fd; color: #0369a1; display:none;">
+            <strong>📋 Poblados:</strong> LUPO_CLASE: 1-CABECERA, 2-POBLADO COMPLETO, 3-POBLADO PARTE, 4-CABECERA PARTE | LUPO_TIPO: 1-URBANO, 2-RURAL, 3-INDIGENA | LUPO_CATE: 1-POBLADO, 2-SITIO
         </div>
         
         <div class="toolbar">
@@ -386,7 +368,7 @@
                     </select>
                 </div>
                 <div class="filtro-item" id="div-filtro-lupo" style="display:none;">
-                    <label>Poblado (LUPO):</label>
+                    <label>Poblado:</label>
                     <select id="filtro-poblado" class="filtro-select" onchange="filtrarCascada('poblado')">
                         <option value="">Todos</option>
                     </select>
@@ -395,11 +377,11 @@
 
             <div class="controles-globales">
                 <button class="btn-global btn-limpiar" onclick="limpiarFiltros()">Limpiar Filtros</button>
-                <button class="btn-global btn-exportar" onclick="exportarCSV()">Exportar Vista Actual</button>
+                <button class="btn-global btn-exportar" onclick="exportarCSV()">Exportar</button>
             </div>
         </div>
 
-        <input type="text" id="search-input" class="search-box" placeholder="Buscar por nombre o código en la tabla activa..." oninput="filtrarTabla()">
+        <input type="text" id="search-input" class="search-box" placeholder="Buscar..." oninput="filtrarTabla()">
 
         <div class="resultados-info" id="contador-registros">
             Cargando datos...
@@ -423,50 +405,36 @@ const csvPaths = {
     barrios: './data/barrios.csv'
 };
 
-// ============================================================
-// ESTRUCTURA DE CAMPOS - CORREGIDA CON LAS COLUMNAS EXACTAS
-// ============================================================
+// ESTRUCTURA DE CAMPOS - SIN fid
 const estructurasDeCampos = {
-    // PROVINCIAS: fid, PROV_ID, PROV_NOMB, Shape_Leng, Shape_Area, PROV_LEY, LEY_MOD_P, GACETA_P, GACE_MOD_P
     provincia: [
         'PROV_ID', 'PROV_NOMB', 'PROV_LEY', 'LEY_MOD_P',
         'GACETA_P', 'GACE_MOD_P', 'Shape_Leng', 'Shape_Area'
     ],
-    
-    // DISTRITOS: fid, PROV_ID, PROV_NOMB, DIST_ID, DIST_NOMB, DIST_LEY, LEY_MOD_D, GACETA_D, GACE_MOD_D, Shape_Leng, Shape_Area, DIST_CODE
     distritos: [
         'PROV_ID', 'PROV_NOMB', 'DIST_ID', 'DIST_NOMB',
         'DIST_LEY', 'LEY_MOD_D', 'GACETA_D', 'GACE_MOD_D',
         'Shape_Leng', 'Shape_Area', 'DIST_CODE'
     ],
-    
-    // CORREGIMIENTOS: fid, PROV_ID, PROV_NOMB, DIST_ID, DIST_NOMB, CORR_ID, CORR_NOMB, CORR_LEY, LEY_MOD_C, GACETA_C, GACE_MOD_C, Shape_Leng, Shape_Area, REGI_ID, CORR_CODE, DIST_CODE
     corregimientos: [
         'PROV_ID', 'PROV_NOMB', 'DIST_ID', 'DIST_NOMB',
         'CORR_ID', 'CORR_NOMB', 'CORR_LEY', 'LEY_MOD_C',
         'GACETA_C', 'GACE_MOD_C', 'Shape_Leng', 'Shape_Area',
         'REGI_ID', 'CORR_CODE', 'DIST_CODE'
     ],
-    
-    // POBLADOS (se mantienen igual)
     poblados: [
         'PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID',
         'CODIGO', 'LUPO_NOMB', 'LUPO_CLASE', 'DESCRIP_ON',
         'LUPO_CATE', 'LUPO_TIPO'
     ],
-    
-    // BARRIOS (se mantienen igual)
     barrios: [
         'PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID',
         'BARR_ID', 'CODIGO', 'BARR_NOMB', 'BARR_CLASE', 'DESCRIP_ON'
     ]
 };
 
-// ============================================================
-// NOMBRES AMIGABLES PARA LAS COLUMNAS
-// ============================================================
+// NOMBRES AMIGABLES
 const nombresColumnas = {
-    
     'PROV_ID': 'Prov ID',
     'PROV_NOMB': 'Provincia',
     'PROV_LEY': 'Ley Prov',
@@ -536,7 +504,7 @@ function inicializarContadorVisitas() {
 }
 
 function cargarNivelTerritorial(nivel) {
-    document.getElementById('contador-registros').innerText = "Cargando datos...";
+    document.getElementById('contador-registros').innerText = "Cargando...";
     
     if (cacheDatos[nivel]) {
         procesarYMostrar(nivel);
@@ -548,29 +516,25 @@ function cargarNivelTerritorial(nivel) {
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
-            console.log(`✅ Datos cargados para ${nivel}:`, results.data.length, 'registros');
-            console.log('📋 Primer registro:', results.data[0]);
-            console.log('📋 Columnas:', Object.keys(results.data[0] || {}));
             cacheDatos[nivel] = results.data;
             procesarYMostrar(nivel);
             actualizarSelectoresFiltros();
         },
         error: function(err) {
             document.getElementById('contador-registros').innerText = "❌ Error al cargar: " + nivel;
-            console.error('Error cargando CSV:', err);
+            console.error(err);
         }
     });
 }
 
 function procesarYMostrar(nivel) {
     if (!cacheDatos[nivel] || cacheDatos[nivel].length === 0) {
-        document.getElementById('contador-registros').innerText = "⚠️ No hay datos disponibles";
+        document.getElementById('contador-registros').innerText = "⚠️ No hay datos";
         return;
     }
     
     datosFiltrados = [...cacheDatos[nivel]];
     
-    // Orden inicial por PROV_ID
     datosFiltrados.sort((a, b) => {
         let idA = String(a.PROV_ID || '').trim();
         let idB = String(b.PROV_ID || '').trim();
@@ -584,10 +548,7 @@ function procesarYMostrar(nivel) {
 function generarCabecera(nivel) {
     const head = document.getElementById('tabla-head');
     const campos = estructurasDeCampos[nivel];
-    if (!campos) {
-        console.error('❌ No hay campos definidos para:', nivel);
-        return;
-    }
+    if (!campos) return;
     
     let html = '<tr>';
     campos.forEach((campo) => {
@@ -609,7 +570,6 @@ function cambiarNivel(nuevoNivel) {
         botones[mapeoIndices[nuevoNivel]].classList.add('active');
     }
 
-    // Mostrar/ocultar filtros según nivel
     document.getElementById('div-filtro-prov').style.display = nuevoNivel !== 'provincia' ? 'block' : 'none';
     document.getElementById('div-filtro-dist').style.display = ['corregimientos', 'poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
     document.getElementById('div-filtro-corr').style.display = ['poblados', 'barrios'].includes(nuevoNivel) ? 'block' : 'none';
@@ -626,7 +586,6 @@ function aplicarFiltrosYRenderizar() {
     const cVal = document.getElementById('filtro-corregimiento').value;
     const lVal = document.getElementById('filtro-poblado').value;
 
-    // Filtros en cascada
     if (pVal && nivelActivo !== 'provincia') {
         baseDatos = baseDatos.filter(r => r.PROV_ID === pVal);
     }
@@ -640,7 +599,6 @@ function aplicarFiltrosYRenderizar() {
         baseDatos = baseDatos.filter(r => r.LUPO_ID === lVal);
     }
 
-    // Búsqueda global
     const busqueda = document.getElementById('search-input').value.toLowerCase().trim();
     if (busqueda !== "") {
         const campos = estructurasDeCampos[nivelActivo];
@@ -658,7 +616,7 @@ function renderizarTabla() {
     const campos = estructurasDeCampos[nivelActivo];
     
     if (!campos || datosFiltrados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; color:#999;">No se encontraron registros.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:15px; color:#999;">No se encontraron registros.</td></tr>`;
         document.getElementById('contador-registros').innerText = "Mostrando 0 registros";
         return;
     }
@@ -670,9 +628,9 @@ function renderizarTabla() {
             let valor = fila[campo] !== undefined && fila[campo] !== null ? String(fila[campo]) : '';
             let displayValor = valor;
             let titulo = '';
-            if (valor.length > 25) {
+            if (valor.length > 20) {
                 titulo = valor;
-                displayValor = valor.substring(0, 22) + '…';
+                displayValor = valor.substring(0, 18) + '…';
             }
             html += `<td${titulo ? ` title="${titulo.replace(/"/g, '&quot;')}"` : ''}>${displayValor}</td>`;
         });
@@ -690,7 +648,6 @@ function filtrarTabla() {
 function actualizarSelectoresFiltros() {
     const provSelect = document.getElementById('filtro-provincia');
     if (!provSelect) return;
-    
     if (provSelect.options.length > 1) return;
 
     if (cacheDatos['provincia']) {
@@ -703,7 +660,6 @@ function actualizarSelectoresFiltros() {
         ].map(s => JSON.parse(s));
         
         provs.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
-        
         provs.forEach(p => {
             provSelect.options.add(new Option(p.nomb, p.id));
         });
@@ -765,7 +721,6 @@ function filtrarCascada(tipoFiltro) {
         }
     }
 
-    // Cargar datos faltantes
     const nivelesAsegurar = ['distritos', 'corregimientos', 'poblados'];
     nivelesAsegurar.forEach(n => {
         if(!cacheDatos[n]) {
@@ -796,7 +751,6 @@ function ordenarTabla(campo) {
         let valA = String(a[campo] || '').trim();
         let valB = String(b[campo] || '').trim();
         
-        // Intentar orden numérico
         const numA = parseFloat(valA.replace(/,/g, ''));
         const numB = parseFloat(valB.replace(/,/g, ''));
         if (!isNaN(numA) && !isNaN(numB) && valA !== '' && valB !== '') {
