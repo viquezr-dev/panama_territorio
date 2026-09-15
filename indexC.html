@@ -22,16 +22,16 @@
             overflow-x: hidden;
         }
 
-        /* ===== HEADER MÓVIL ===== */
+        /* ===== HEADER MÓVIL COMPACTO ===== */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: rgba(255,255,255,0.95);
-            padding: 12px 16px;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 8px 12px;
+            border-radius: 0 0 16px 16px;
+            margin-bottom: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -40,12 +40,12 @@
         .logo-section {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .logo-placeholder {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             background: #6b5b95;
             border-radius: 50%;
             display: flex;
@@ -53,7 +53,7 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 11px;
             flex-shrink: 0;
         }
 
@@ -63,30 +63,30 @@
         }
 
         .logo-text strong {
-            font-size: 14px;
+            font-size: 12px;
             color: #6b5b95;
             line-height: 1.2;
         }
 
         .logo-text span {
-            font-size: 10px;
+            font-size: 9px;
             color: #7a7a7a;
         }
 
-        /* ===== BOTÓN HAMBURGUESA ===== */
+        /* ===== BOTÓN HAMBURGUESA COMPACTO ===== */
         .hamburger-btn {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 5px;
-            width: 44px;
-            height: 44px;
+            gap: 3px;
+            width: 34px;
+            height: 34px;
             background: #6b5b95;
             border: none;
-            border-radius: 12px;
+            border-radius: 9px;
             cursor: pointer;
-            padding: 10px;
+            padding: 7px;
             transition: background 0.2s;
             flex-shrink: 0;
         }
@@ -97,33 +97,32 @@
 
         .hamburger-btn span {
             display: block;
-            width: 22px;
-            height: 2.5px;
+            width: 16px;
+            height: 2px;
             background: white;
             border-radius: 3px;
             transition: all 0.3s ease;
             transform-origin: center;
         }
 
-        /* Animación a X */
         .hamburger-btn.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
+            transform: rotate(45deg) translate(4px, 4px);
         }
         .hamburger-btn.active span:nth-child(2) {
             opacity: 0;
             transform: scaleX(0);
         }
         .hamburger-btn.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -5px);
+            transform: rotate(-45deg) translate(4px, -4px);
         }
 
-        /* ===== MENÚ LATERAL DESLIZANTE ===== */
+        /* ===== MENÚ LATERAL ===== */
         .side-menu {
             position: fixed;
             top: 0;
             right: -100%;
-            width: 85%;
-            max-width: 340px;
+            width: 80%;
+            max-width: 300px;
             height: 100vh;
             background: white;
             box-shadow: -5px 0 25px rgba(0,0,0,0.15);
@@ -132,7 +131,7 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
-            border-radius: 20px 0 0 20px;
+            border-radius: 16px 0 0 16px;
         }
 
         .side-menu.open {
@@ -143,16 +142,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 20px;
+            padding: 12px 16px;
             background: #6b5b95;
             color: white;
-            border-radius: 20px 0 0 0;
+            border-radius: 16px 0 0 0;
             flex-shrink: 0;
         }
 
         .side-menu-header h3 {
             margin: 0;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
         }
 
@@ -160,15 +159,14 @@
             background: rgba(255,255,255,0.2);
             border: none;
             color: white;
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            font-size: 18px;
+            font-size: 15px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
         }
 
         .close-menu-btn:active {
@@ -176,7 +174,7 @@
         }
 
         .side-menu-body {
-            padding: 16px;
+            padding: 14px;
             flex: 1;
             overflow-y: auto;
         }
@@ -205,29 +203,29 @@
             max-width: 100%;
             margin: 0 auto;
             background: white;
-            padding: 16px;
-            border-radius: 20px 20px 0 0;
+            padding: 14px;
+            border-radius: 16px 16px 0 0;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
-            min-height: calc(100vh - 80px);
+            min-height: calc(100vh - 60px);
         }
 
         h1 {
             color: #6b5b95;
             text-align: center;
             border-bottom: 3px solid #f7c1c1;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
             font-weight: 600;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .descripcion-box {
             background: #fff7e6;
             border: 1px solid #ffe0b5;
-            border-radius: 14px;
-            padding: 12px 15px;
-            margin: 12px 0;
-            font-size: 12px;
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin: 10px 0;
+            font-size: 11px;
             color: #b46f3a;
             line-height: 1.5;
         }
@@ -240,133 +238,114 @@
 
         #leyenda-poblados span {
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
-        /* ===== BOTONES DE NIVEL ===== */
-        .nivel-section {
-            margin-bottom: 12px;
-        }
-
-        .selector-nivel {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .btn-nivel {
-            padding: 12px 8px;
-            background: #e0f2fe;
-            color: #0369a1;
-            border: 2px solid #bae6fd;
-            border-radius: 14px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 12px;
-            transition: all 0.2s ease;
-            text-align: center;
-            width: 100%;
-        }
-
-        .btn-nivel.active {
-            background: #6b5b95;
-            color: white;
-            border-color: #6b5b95;
-        }
-
-        .btn-nivel:active {
-            transform: scale(0.97);
-        }
-
-        /* Último botón ocupa todo el ancho */
-        .btn-nivel:last-child:nth-child(odd) {
-            grid-column: 1 / -1;
-        }
-
-        /* ===== FILTROS ===== */
-        .filtros-container {
+        /* ===== SELECTOR JERÁRQUICO EN CASCADA ===== */
+        .cascada-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 12px;
         }
 
-        .filtro-item {
+        .cascada-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            animation: fadeSlideIn 0.3s ease;
+        }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cascada-item label {
+            font-weight: 600;
+            color: #6b5b95;
+            font-size: 11px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: white;
-            padding: 8px 12px;
-            border-radius: 14px;
-            border: 1px solid #f0cfb0;
+            gap: 5px;
         }
 
-        .filtro-item label {
-            font-weight: 600;
-            color: #9b7b5c;
-            font-size: 11px;
-            white-space: nowrap;
-            min-width: 75px;
+        .cascada-item label .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            background: #6b5b95;
+            color: white;
+            border-radius: 50%;
+            font-size: 10px;
+            font-weight: 700;
+            flex-shrink: 0;
         }
 
-        .filtro-select {
-            padding: 8px 10px;
-            border: 1px solid #f0cfb0;
+        .cascada-select {
+            padding: 10px 12px;
+            border: 2px solid #e5d5c5;
             border-radius: 10px;
-            font-size: 12px;
+            font-size: 13px;
             background: white;
-            flex: 1;
             outline: none;
-            min-width: 0;
-        }
-
-        .filtro-select:focus {
-            border-color: #6b5b95;
-        }
-
-        /* ===== CONTROLES GLOBALES ===== */
-        .controles-globales {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn-global {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
+            color: #4a4a4a;
             transition: all 0.2s ease;
-            flex: 1;
-            min-width: 120px;
+            width: 100%;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b5b95' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
         }
 
-        .btn-limpiar {
+        .cascada-select:focus {
+            border-color: #6b5b95;
+            box-shadow: 0 0 0 3px rgba(107, 91, 149, 0.15);
+        }
+
+        .cascada-select:disabled {
+            background-color: #f5f5f5;
+            color: #aaa;
+            cursor: not-allowed;
+            border-color: #e5e5e5;
+        }
+
+        .cascada-select.filled {
+            border-color: #6b5b95;
+            background-color: #f8f5ff;
+        }
+
+        /* Botón de reinicio */
+        .btn-reset-cascada {
+            padding: 8px 12px;
             background: #ffd3b6;
             color: #a5673f;
+            border: none;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 4px;
+            transition: background 0.2s;
+            align-self: flex-start;
         }
 
-        .btn-limpiar:active { background: #ffc4a0; }
-
-        .btn-exportar {
-            background: #b5e3ff;
-            color: #2c6b8f;
+        .btn-reset-cascada:active {
+            background: #ffc4a0;
         }
-
-        .btn-exportar:active { background: #9ad6ff; }
 
         /* ===== BUSCADOR ===== */
         .search-box {
             width: 100%;
-            padding: 12px 16px;
+            padding: 11px 14px;
             box-sizing: border-box;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             border: 1px solid #f0cfb0;
-            border-radius: 30px;
-            font-size: 14px;
+            border-radius: 25px;
+            font-size: 13px;
             transition: all 0.2s ease;
         }
 
@@ -381,9 +360,9 @@
             max-height: 55vh;
             overflow-y: auto;
             overflow-x: auto;
-            border-radius: 14px;
+            border-radius: 12px;
             border: 1px solid #f0e5dd;
-            margin: 12px 0;
+            margin: 10px 0;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -396,7 +375,7 @@
         }
 
         th, td {
-            padding: 10px 8px;
+            padding: 9px 8px;
             border-bottom: 1px solid #f0e5dd;
             white-space: nowrap;
         }
@@ -423,28 +402,21 @@
         /* ===== INFO Y ESTADOS ===== */
         .resultados-info {
             text-align: center;
-            margin: 10px 0;
+            margin: 8px 0;
             font-weight: 600;
             color: #8b6b4d;
-            font-size: 12px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            font-weight: bold;
-            color: #6b5b95;
+            font-size: 11px;
         }
 
         /* ===== CRÉDITOS EN MENÚ ===== */
         .menu-credits {
-            padding: 16px;
+            padding: 12px;
             border-top: 1px solid #f0e5dd;
-            font-size: 11px;
+            font-size: 10px;
             color: #7a7a7a;
             text-align: center;
             background: #faf8f6;
-            border-radius: 0 0 0 20px;
+            border-radius: 0 0 0 16px;
             flex-shrink: 0;
         }
 
@@ -457,15 +429,15 @@
         .visitor-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
+            gap: 5px;
+            padding: 5px 10px;
             background: #f0f2f5;
             border-radius: 20px;
             border: 1px solid #e0e2e6;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             color: #6b5b95;
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
         .visitor-count {
@@ -475,25 +447,49 @@
 
         /* ===== SECCIONES DEL MENÚ ===== */
         .menu-section {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .menu-section-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: #6b5b95;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 10px;
-            padding-bottom: 6px;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
             border-bottom: 2px solid #f7c1c1;
         }
 
-        /* ===== SCROLLBAR PERSONALIZADO ===== */
+        .btn-global {
+            padding: 9px 14px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin-bottom: 6px;
+        }
+
+        .btn-limpiar {
+            background: #ffd3b6;
+            color: #a5673f;
+        }
+        .btn-limpiar:active { background: #ffc4a0; }
+
+        .btn-exportar {
+            background: #b5e3ff;
+            color: #2c6b8f;
+        }
+        .btn-exportar:active { background: #9ad6ff; }
+
+        /* ===== SCROLLBAR ===== */
         .table-wrapper::-webkit-scrollbar,
         .side-menu-body::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 5px;
         }
 
         .table-wrapper::-webkit-scrollbar-track,
@@ -508,44 +504,21 @@
             border-radius: 3px;
         }
 
-        /* ===== RESPONSIVE AJUSTES ===== */
+        /* ===== RESPONSIVE ===== */
         @media (min-width: 600px) {
-            .selector-nivel {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            .btn-nivel:last-child:nth-child(odd) {
-                grid-column: auto;
-            }
-            .filtros-container {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-            .filtro-item {
-                flex: 1;
-                min-width: 200px;
+            .cascada-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
             }
         }
 
         @media (min-width: 768px) {
             .container {
                 max-width: 95%;
-                border-radius: 24px;
-                margin: 20px auto;
-                padding: 25px;
-            }
-            .selector-nivel {
-                grid-template-columns: repeat(5, 1fr);
-            }
-        }
-
-        /* Ocultar header original en móvil */
-        .desktop-credits {
-            display: none;
-        }
-
-        @media (min-width: 768px) {
-            .desktop-credits {
-                display: flex;
+                border-radius: 20px;
+                margin: 15px auto;
+                padding: 20px;
             }
             .hamburger-btn {
                 display: none;
@@ -557,16 +530,22 @@
                 display: none;
             }
             .header {
-                border-radius: 20px;
-                padding: 15px 25px;
-                margin-bottom: 25px;
+                border-radius: 16px;
+                padding: 12px 20px;
+                margin-bottom: 15px;
+            }
+            .cascada-container {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            h1 {
+                font-size: 20px;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- ===== HEADER MÓVIL CON HAMBURGUESA ===== -->
+    <!-- ===== HEADER MÓVIL ===== -->
     <div class="header">
         <div class="logo-section">
             <div class="logo-placeholder">PA</div>
@@ -592,56 +571,11 @@
             <button class="close-menu-btn" onclick="toggleMenu()" aria-label="Cerrar menú">✕</button>
         </div>
         <div class="side-menu-body">
-            <!-- Niveles -->
-            <div class="menu-section">
-                <div class="menu-section-title">📊 Nivel Territorial</div>
-                <div class="selector-nivel" id="selectorNivelMenu">
-                    <button class="btn-nivel active" data-nivel="provincia" onclick="cambiarNivel('provincia')">Provincias</button>
-                    <button class="btn-nivel" data-nivel="distritos" onclick="cambiarNivel('distritos')">Distritos</button>
-                    <button class="btn-nivel" data-nivel="corregimientos" onclick="cambiarNivel('corregimientos')">Corregimientos</button>
-                    <button class="btn-nivel" data-nivel="poblados" onclick="cambiarNivel('poblados')">Poblados</button>
-                    <button class="btn-nivel" data-nivel="barrios" onclick="cambiarNivel('barrios')">Barrios</button>
-                </div>
-            </div>
-
-            <!-- Filtros -->
-            <div class="menu-section">
-                <div class="menu-section-title">🔍 Filtros</div>
-                <div class="filtros-container">
-                    <div class="filtro-item" id="div-filtro-prov" style="display:none;">
-                        <label>Provincia:</label>
-                        <select id="filtro-provincia" class="filtro-select" onchange="filtrarCascada('provincia')">
-                            <option value="">Todas</option>
-                        </select>
-                    </div>
-                    <div class="filtro-item" id="div-filtro-dist" style="display:none;">
-                        <label>Distrito:</label>
-                        <select id="filtro-distrito" class="filtro-select" onchange="filtrarCascada('distrito')">
-                            <option value="">Todos</option>
-                        </select>
-                    </div>
-                    <div class="filtro-item" id="div-filtro-corr" style="display:none;">
-                        <label>Corregimiento:</label>
-                        <select id="filtro-corregimiento" class="filtro-select" onchange="filtrarCascada('corregimiento')">
-                            <option value="">Todos</option>
-                        </select>
-                    </div>
-                    <div class="filtro-item" id="div-filtro-lupo" style="display:none;">
-                        <label>Poblado (LUPO):</label>
-                        <select id="filtro-poblado" class="filtro-select" onchange="filtrarCascada('poblado')">
-                            <option value="">Todos</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
             <!-- Acciones -->
             <div class="menu-section">
                 <div class="menu-section-title">🛠️ Acciones</div>
-                <div class="controles-globales" style="flex-direction: column;">
-                    <button class="btn-global btn-limpiar" onclick="limpiarFiltros()">🧹 Limpiar Filtros</button>
-                    <button class="btn-global btn-exportar" onclick="exportarCSV()">📥 Exportar CSV</button>
-                </div>
+                <button class="btn-global btn-limpiar" onclick="limpiarFiltros()">🧹 Limpiar Filtros</button>
+                <button class="btn-global btn-exportar" onclick="exportarCSV()">📥 Exportar CSV</button>
             </div>
 
             <!-- Créditos -->
@@ -659,15 +593,51 @@
         <h1>Explorador Territorial</h1>
 
         <div class="descripcion-box" id="descripcion-general">
-            Secciona el nivel territorial requerido. Las opciones de filtrado se actualizarán en cascada.
+            Selecciona los filtros en cascada: Provincia → Distrito → Corregimiento → Poblado → Barrio. Cada selección actualiza el siguiente nivel.
         </div>
 
         <div id="leyenda-poblados" class="descripcion-box" style="display: none;">
-            <strong>📋 Patrón para Poblados:</strong><br>
+            <strong>📋 Patrón para Poblados:</strong>
             <span><strong>🔹 LUPO_CLASE:</strong> 1-CABECERA, 2-POBLADO COMPLETO, 3-POBLADO PARTE, 4-CABECERA PARTE</span>
             <span><strong>🔍 LUPO_TIPO:</strong> 1-URBANO, 2-RURAL, 3-INDIGENA</span>
             <span><strong>🔍 LUPO_CATE:</strong> 1-POBLADO, 2-SITIO</span>
         </div>
+
+        <!-- ===== SELECTOR JERÁRQUICO EN CASCADA ===== -->
+        <div class="cascada-container" id="cascadaContainer">
+            <div class="cascada-item" id="cascada-prov">
+                <label><span class="step-num">1</span> Provincia</label>
+                <select id="sel-provincia" class="cascada-select" onchange="onCascadaChange('provincia')">
+                    <option value="">— Todas las provincias —</option>
+                </select>
+            </div>
+            <div class="cascada-item" id="cascada-dist" style="display:none;">
+                <label><span class="step-num">2</span> Distrito</label>
+                <select id="sel-distrito" class="cascada-select" onchange="onCascadaChange('distrito')">
+                    <option value="">— Todos los distritos —</option>
+                </select>
+            </div>
+            <div class="cascada-item" id="cascada-corr" style="display:none;">
+                <label><span class="step-num">3</span> Corregimiento</label>
+                <select id="sel-corregimiento" class="cascada-select" onchange="onCascadaChange('corregimiento')">
+                    <option value="">— Todos los corregimientos —</option>
+                </select>
+            </div>
+            <div class="cascada-item" id="cascada-lupo" style="display:none;">
+                <label><span class="step-num">4</span> Poblado (LUPO)</label>
+                <select id="sel-poblado" class="cascada-select" onchange="onCascadaChange('poblado')">
+                    <option value="">— Todos los poblados —</option>
+                </select>
+            </div>
+            <div class="cascada-item" id="cascada-barr" style="display:none;">
+                <label><span class="step-num">5</span> Barrio</label>
+                <select id="sel-barrio" class="cascada-select" onchange="onCascadaChange('barrio')">
+                    <option value="">— Todos los barrios —</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn-reset-cascada" onclick="limpiarFiltros()">🔄 Reiniciar selección</button>
 
         <input type="text" id="search-input" class="search-box" placeholder="🔎 Buscar por nombre o código..." oninput="filtrarTabla()">
 
@@ -702,9 +672,11 @@
         };
 
         let cacheDatos = {};
-        let nivelActivo = 'provincia';
         let datosFiltrados = [];
         let ordenAscendente = true;
+
+        // El nivel que se muestra en la tabla = el nivel más profundo seleccionado + 1
+        let nivelTablaActivo = 'provincia';
 
         // ===== MENÚ HAMBURGUESA =====
         function toggleMenu() {
@@ -716,7 +688,6 @@
             overlay.classList.toggle('active');
             btn.classList.toggle('active');
             
-            // Bloquear scroll del body cuando el menú está abierto
             if (menu.classList.contains('open')) {
                 document.body.style.overflow = 'hidden';
             } else {
@@ -724,7 +695,6 @@
             }
         }
 
-        // Cerrar menú al seleccionar una opción en móvil
         function cerrarMenuSiMovil() {
             if (window.innerWidth < 768) {
                 const menu = document.getElementById('sideMenu');
@@ -737,7 +707,8 @@
         // ===== INICIALIZACIÓN =====
         window.addEventListener('DOMContentLoaded', () => {
             inicializarContadorVisitas();
-            cargarNivelTerritorial(nivelActivo);
+            // Pre-cargar todos los niveles para que la cascada funcione fluida
+            precargarTodosLosNiveles();
         });
 
         // ===== CONTADOR DE VISITAS =====
@@ -763,44 +734,291 @@
                 });
         }
 
-        // ===== CARGA DE DATOS =====
-        function cargarNivelTerritorial(nivel) {
-            document.getElementById('contador-registros').innerText = "Cargando datos...";
-            
-            if (cacheDatos[nivel]) {
-                procesarYMostrar(nivel);
-                return;
-            }
+        // ===== PRECARGA DE DATOS =====
+        function precargarTodosLosNiveles() {
+            const niveles = ['provincia', 'distritos', 'corregimientos', 'poblados', 'barrios'];
+            let pendientes = niveles.length;
 
-            Papa.parse(csvPaths[nivel], {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    cacheDatos[nivel] = results.data;
-                    procesarYMostrar(nivel);
-                    actualizarSelectoresFiltros();
-                },
-                error: function(err) {
-                    document.getElementById('contador-registros').innerText = "Error al cargar: " + nivel;
-                    console.error(err);
-                }
+            niveles.forEach(nivel => {
+                Papa.parse(csvPaths[nivel], {
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        cacheDatos[nivel] = results.data;
+                        pendientes--;
+                        if (pendientes === 0) {
+                            // Todo listo: inicializar cascada
+                            inicializarCascada();
+                            // Mostrar provincias por defecto
+                            mostrarNivelEnTabla('provincia');
+                        }
+                    },
+                    error: function(err) {
+                        console.error("Error cargando " + nivel, err);
+                        pendientes--;
+                        if (pendientes === 0) {
+                            inicializarCascada();
+                            mostrarNivelEnTabla('provincia');
+                        }
+                    }
+                });
             });
         }
 
-        function procesarYMostrar(nivel) {
-            datosFiltrados = [...cacheDatos[nivel]];
-            
-            if (nivel === 'provincia') {
-                datosFiltrados.sort((a, b) => {
-                    let idA = String(a.PROV_ID || '').trim();
-                    let idB = String(b.PROV_ID || '').trim();
-                    return idA.localeCompare(idB, undefined, { numeric: true });
+        // ===== INICIALIZAR CASCADA =====
+        function inicializarCascada() {
+            // Llenar el primer combo: Provincias
+            const provSelect = document.getElementById('sel-provincia');
+            provSelect.innerHTML = '<option value="">— Todas las provincias —</option>';
+
+            if (cacheDatos['provincia']) {
+                const provs = [...new Set(cacheDatos['provincia']
+                    .filter(r => r.PROV_ID && r.PROV_NOMB)
+                    .map(r => JSON.stringify({
+                        id: String(r.PROV_ID).trim(),
+                        nomb: String(r.PROV_NOMB).trim()
+                    }))
+                )].map(s => JSON.parse(s));
+
+                provs.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' }));
+
+                provs.forEach(p => {
+                    provSelect.options.add(new Option(`${p.id} - ${p.nomb}`, p.id));
                 });
             }
-        
-            generarCabecera(nivel);
+
+            // Ocultar los demás niveles al inicio
+            document.getElementById('cascada-dist').style.display = 'none';
+            document.getElementById('cascada-corr').style.display = 'none';
+            document.getElementById('cascada-lupo').style.display = 'none';
+            document.getElementById('cascada-barr').style.display = 'none';
+            document.getElementById('leyenda-poblados').style.display = 'none';
+        }
+
+        // ===== MANEJO DE LA CASCADA =====
+        function onCascadaChange(nivelOrigen) {
+            const pVal = document.getElementById('sel-provincia').value;
+            const dVal = document.getElementById('sel-distrito').value;
+            const cVal = document.getElementById('sel-corregimiento').value;
+            const lVal = document.getElementById('sel-poblado').value;
+            const bVal = document.getElementById('sel-barrio').value;
+
+            if (nivelOrigen === 'provincia') {
+                // Resetear niveles inferiores
+                resetSelect('sel-distrito', '— Todos los distritos —');
+                resetSelect('sel-corregimiento', '— Todos los corregimientos —');
+                resetSelect('sel-poblado', '— Todos los poblados —');
+                resetSelect('sel-barrio', '— Todos los barrios —');
+                
+                ocultarCascada('cascada-corr');
+                ocultarCascada('cascada-lupo');
+                ocultarCascada('cascada-barr');
+                document.getElementById('leyenda-poblados').style.display = 'none';
+
+                if (pVal) {
+                    // Cargar distritos de esta provincia
+                    llenarDistritos(pVal);
+                    mostrarCascada('cascada-dist');
+                    // La tabla muestra DISTRITOS
+                    mostrarNivelEnTabla('distritos');
+                } else {
+                    ocultarCascada('cascada-dist');
+                    // Sin provincia: mostrar provincias
+                    mostrarNivelEnTabla('provincia');
+                }
+            }
+            else if (nivelOrigen === 'distrito') {
+                resetSelect('sel-corregimiento', '— Todos los corregimientos —');
+                resetSelect('sel-poblado', '— Todos los poblados —');
+                resetSelect('sel-barrio', '— Todos los barrios —');
+                
+                ocultarCascada('cascada-lupo');
+                ocultarCascada('cascada-barr');
+                document.getElementById('leyenda-poblados').style.display = 'none';
+
+                if (dVal && pVal) {
+                    llenarCorregimientos(pVal, dVal);
+                    mostrarCascada('cascada-corr');
+                    mostrarNivelEnTabla('corregimientos');
+                } else {
+                    ocultarCascada('cascada-corr');
+                    mostrarNivelEnTabla('distritos');
+                }
+            }
+            else if (nivelOrigen === 'corregimiento') {
+                resetSelect('sel-poblado', '— Todos los poblados —');
+                resetSelect('sel-barrio', '— Todos los barrios —');
+                
+                ocultarCascada('cascada-barr');
+                document.getElementById('leyenda-poblados').style.display = 'none';
+
+                if (cVal && dVal && pVal) {
+                    llenarPoblados(pVal, dVal, cVal);
+                    mostrarCascada('cascada-lupo');
+                    mostrarNivelEnTabla('poblados');
+                } else {
+                    ocultarCascada('cascada-lupo');
+                    mostrarNivelEnTabla('corregimientos');
+                }
+            }
+            else if (nivelOrigen === 'poblado') {
+                resetSelect('sel-barrio', '— Todos los barrios —');
+
+                if (lVal && cVal && dVal && pVal) {
+                    llenarBarrios(pVal, dVal, cVal, lVal);
+                    mostrarCascada('cascada-barr');
+                    mostrarNivelEnTabla('barrios');
+                } else {
+                    ocultarCascada('cascada-barr');
+                    mostrarNivelEnTabla('poblados');
+                }
+            }
+            else if (nivelOrigen === 'barrio') {
+                // Ya estamos en el nivel más profundo
+                if (bVal) {
+                    mostrarNivelEnTabla('barrios');
+                } else {
+                    mostrarNivelEnTabla('barrios');
+                }
+            }
+
+            // Mostrar leyenda si estamos en poblados
+            if (nivelTablaActivo === 'poblados') {
+                document.getElementById('leyenda-poblados').style.display = 'block';
+            }
+
             aplicarFiltrosYRenderizar();
+        }
+
+        // ===== LLENAR COMBOS =====
+        function llenarDistritos(provId) {
+            const sel = document.getElementById('sel-distrito');
+            resetSelect('sel-distrito', '— Todos los distritos —');
+            if (!cacheDatos['distritos']) return;
+
+            const filtrados = cacheDatos['distritos'].filter(r => String(r.PROV_ID).trim() === provId);
+            let unicos = [...new Set(filtrados.map(r => JSON.stringify({
+                id: String(r.DIST_ID).trim(),
+                nomb: String(r.DIST_NOMB).trim()
+            })))].map(s => JSON.parse(s));
+
+            unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+            unicos.forEach(d => {
+                sel.options.add(new Option(`${d.id} - ${d.nomb}`, d.id));
+            });
+        }
+
+        function llenarCorregimientos(provId, distId) {
+            const sel = document.getElementById('sel-corregimiento');
+            resetSelect('sel-corregimiento', '— Todos los corregimientos —');
+            if (!cacheDatos['corregimientos']) return;
+
+            const filtrados = cacheDatos['corregimientos'].filter(r => 
+                String(r.PROV_ID).trim() === provId && String(r.DIST_ID).trim() === distId
+            );
+            let unicos = [...new Set(filtrados.map(r => JSON.stringify({
+                id: String(r.CORR_ID).trim(),
+                nomb: String(r.CORR_NOMB).trim()
+            })))].map(s => JSON.parse(s));
+
+            unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+            unicos.forEach(c => {
+                sel.options.add(new Option(`${c.id} - ${c.nomb}`, c.id));
+            });
+        }
+
+        function llenarPoblados(provId, distId, corrId) {
+            const sel = document.getElementById('sel-poblado');
+            resetSelect('sel-poblado', '— Todos los poblados —');
+            if (!cacheDatos['poblados']) return;
+
+            const filtrados = cacheDatos['poblados'].filter(r => 
+                String(r.PROV_ID).trim() === provId && 
+                String(r.DIST_ID).trim() === distId && 
+                String(r.CORR_ID).trim() === corrId
+            );
+            let unicos = [...new Set(filtrados.map(r => JSON.stringify({
+                id: String(r.LUPO_ID).trim(),
+                nomb: String(r.LUPO_NOMB).trim()
+            })))].map(s => JSON.parse(s));
+
+            unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+            unicos.forEach(l => {
+                sel.options.add(new Option(`${l.id} - ${l.nomb}`, l.id));
+            });
+        }
+
+        function llenarBarrios(provId, distId, corrId, lupoId) {
+            const sel = document.getElementById('sel-barrio');
+            resetSelect('sel-barrio', '— Todos los barrios —');
+            if (!cacheDatos['barrios']) return;
+
+            const filtrados = cacheDatos['barrios'].filter(r => 
+                String(r.PROV_ID).trim() === provId && 
+                String(r.DIST_ID).trim() === distId && 
+                String(r.CORR_ID).trim() === corrId &&
+                String(r.LUPO_ID).trim() === lupoId
+            );
+            let unicos = [...new Set(filtrados.map(r => JSON.stringify({
+                id: String(r.BARR_ID).trim(),
+                nomb: String(r.BARR_NOMB).trim()
+            })))].map(s => JSON.parse(s));
+
+            unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+            unicos.forEach(b => {
+                sel.options.add(new Option(`${b.id} - ${b.nomb}`, b.id));
+            });
+        }
+
+        // ===== UTILIDADES DE CASCADA =====
+        function resetSelect(id, placeholder) {
+            const sel = document.getElementById(id);
+            if (sel) {
+                sel.innerHTML = `<option value="">${placeholder}</option>`;
+                sel.classList.remove('filled');
+            }
+        }
+
+        function mostrarCascada(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.display = 'flex';
+            }
+        }
+
+        function ocultarCascada(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.display = 'none';
+            }
+        }
+
+        // ===== MOSTRAR NIVEL EN TABLA =====
+        function mostrarNivelEnTabla(nivel) {
+            nivelTablaActivo = nivel;
+            
+            // Resetear orden ascendente al cambiar de nivel
+            ordenAscendente = true;
+
+            generarCabecera(nivel);
+            
+            // Ordenar los datos del nivel por su ID
+            let baseDatos = cacheDatos[nivel] ? [...cacheDatos[nivel]] : [];
+            baseDatos.sort((a, b) => {
+                let idA = '', idB = '';
+                if (nivel === 'provincia') { idA = a.PROV_ID; idB = b.PROV_ID; }
+                else if (nivel === 'distritos') { idA = a.DIST_ID; idB = b.DIST_ID; }
+                else if (nivel === 'corregimientos') { idA = a.CORR_ID; idB = b.CORR_ID; }
+                else if (nivel === 'poblados') { idA = a.LUPO_ID; idB = b.LUPO_ID; }
+                else if (nivel === 'barrios') { idA = a.BARR_ID; idB = b.BARR_ID; }
+                
+                idA = String(idA || '').trim();
+                idB = String(idB || '').trim();
+                return idA.localeCompare(idB, undefined, { numeric: true });
+            });
+
+            datosFiltrados = baseDatos;
         }
 
         function generarCabecera(nivel) {
@@ -814,56 +1032,37 @@
             head.innerHTML = html;
         }
 
-        // ===== CAMBIO DE NIVEL =====
-        function cambiarNivel(nuevoNivel) {
-            nivelActivo = nuevoNivel;
-            
-            // Actualizar botones activos en el menú
-            document.querySelectorAll('.btn-nivel').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.nivel === nuevoNivel) {
-                    btn.classList.add('active');
-                }
-            });
-
-            // Mostrar/Ocultar filtros
-            document.getElementById('div-filtro-prov').style.display = nuevoNivel !== 'provincia' ? 'flex' : 'none';
-            document.getElementById('div-filtro-dist').style.display = ['corregimientos', 'poblados', 'barrios'].includes(nuevoNivel) ? 'flex' : 'none';
-            document.getElementById('div-filtro-corr').style.display = ['poblados', 'barrios'].includes(nuevoNivel) ? 'flex' : 'none';
-            document.getElementById('div-filtro-lupo').style.display = nuevoNivel === 'barrios' ? 'flex' : 'none';
-            document.getElementById('leyenda-poblados').style.display = nuevoNivel === 'poblados' ? 'block' : 'none';
-            
-            cargarNivelTerritorial(nuevoNivel);
-            cerrarMenuSiMovil();
-        }
-
-        // ===== FILTRADO =====
+        // ===== FILTRADO Y RENDERIZADO =====
         function aplicarFiltrosYRenderizar() {
-            let baseDatos = cacheDatos[nivelActivo] ? [...cacheDatos[nivelActivo]] : [];
+            let baseDatos = cacheDatos[nivelTablaActivo] ? [...cacheDatos[nivelTablaActivo]] : [];
 
-            const pVal = document.getElementById('filtro-provincia').value;
-            const dVal = document.getElementById('filtro-distrito').value;
-            const cVal = document.getElementById('filtro-corregimiento').value;
-            const lVal = document.getElementById('filtro-poblado').value;
+            const pVal = document.getElementById('sel-provincia').value;
+            const dVal = document.getElementById('sel-distrito').value;
+            const cVal = document.getElementById('sel-corregimiento').value;
+            const lVal = document.getElementById('sel-poblado').value;
+            const bVal = document.getElementById('sel-barrio').value;
 
-            // Filtrado jerárquico
-            if (pVal && nivelActivo !== 'provincia') {
-                baseDatos = baseDatos.filter(r => r.PROV_ID === pVal);
+            // Filtrar según los combos seleccionados (respetando la jerarquía)
+            if (pVal) {
+                baseDatos = baseDatos.filter(r => String(r.PROV_ID).trim() === pVal);
             }
-            if (dVal && ['distritos', 'corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
-                baseDatos = baseDatos.filter(r => r.DIST_ID === dVal);
+            if (dVal && ['distritos', 'corregimientos', 'poblados', 'barrios'].includes(nivelTablaActivo)) {
+                baseDatos = baseDatos.filter(r => String(r.DIST_ID).trim() === dVal);
             }
-            if (cVal && ['corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
-                baseDatos = baseDatos.filter(r => r.CORR_ID === cVal);
+            if (cVal && ['corregimientos', 'poblados', 'barrios'].includes(nivelTablaActivo)) {
+                baseDatos = baseDatos.filter(r => String(r.CORR_ID).trim() === cVal);
             }
-            if (lVal && ['poblados', 'barrios'].includes(nivelActivo)) {
-                baseDatos = baseDatos.filter(r => r.LUPO_ID === lVal);
+            if (lVal && ['poblados', 'barrios'].includes(nivelTablaActivo)) {
+                baseDatos = baseDatos.filter(r => String(r.LUPO_ID).trim() === lVal);
+            }
+            if (bVal && nivelTablaActivo === 'barrios') {
+                baseDatos = baseDatos.filter(r => String(r.BARR_ID).trim() === bVal);
             }
 
-            // Búsqueda
+            // Búsqueda global
             const busqueda = document.getElementById('search-input').value.toLowerCase().trim();
             if (busqueda !== "") {
-                const campos = estructurasDeCampos[nivelActivo];
+                const campos = estructurasDeCampos[nivelTablaActivo];
                 baseDatos = baseDatos.filter(fila => {
                     return campos.some(campo => String(fila[campo] || '').toLowerCase().includes(busqueda));
                 });
@@ -872,11 +1071,11 @@
             // Ordenar por ID
             baseDatos.sort((a, b) => {
                 let idA = '', idB = '';
-                if (nivelActivo === 'provincia') { idA = a.PROV_ID; idB = b.PROV_ID; }
-                else if (nivelActivo === 'distritos') { idA = a.DIST_ID; idB = b.DIST_ID; }
-                else if (nivelActivo === 'corregimientos') { idA = a.CORR_ID; idB = b.CORR_ID; }
-                else if (nivelActivo === 'poblados') { idA = a.LUPO_ID; idB = b.LUPO_ID; }
-                else if (nivelActivo === 'barrios') { idA = a.BARR_ID; idB = b.BARR_ID; }
+                if (nivelTablaActivo === 'provincia') { idA = a.PROV_ID; idB = b.PROV_ID; }
+                else if (nivelTablaActivo === 'distritos') { idA = a.DIST_ID; idB = b.DIST_ID; }
+                else if (nivelTablaActivo === 'corregimientos') { idA = a.CORR_ID; idB = b.CORR_ID; }
+                else if (nivelTablaActivo === 'poblados') { idA = a.LUPO_ID; idB = b.LUPO_ID; }
+                else if (nivelTablaActivo === 'barrios') { idA = a.BARR_ID; idB = b.BARR_ID; }
                 
                 idA = String(idA || '').trim();
                 idB = String(idB || '').trim();
@@ -889,7 +1088,7 @@
 
         function renderizarTabla() {
             const tbody = document.getElementById('tabla-body');
-            const campos = estructurasDeCampos[nivelActivo];
+            const campos = estructurasDeCampos[nivelTablaActivo];
             
             if (datosFiltrados.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="${campos.length}" style="text-align:center; padding:30px; color:#999;">No se encontraron registros.</td></tr>`;
@@ -914,96 +1113,6 @@
             aplicarFiltrosYRenderizar();
         }
 
-        // ===== SELECTORES EN CASCADA =====
-        function actualizarSelectoresFiltros() {
-            const provSelect = document.getElementById('filtro-provincia');
-            if (!provSelect) return;
-            if (provSelect.options.length > 1) return;
-
-            if (cacheDatos['provincia']) {
-                const provs = [...new Set(cacheDatos['provincia']
-                    .filter(r => r.PROV_ID && r.PROV_NOMB)
-                    .map(r => JSON.stringify({
-                        id: String(r.PROV_ID).trim(),
-                        nomb: String(r.PROV_NOMB).trim()
-                    }))
-                )].map(s => JSON.parse(s));
-
-                provs.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' }));
-
-                provs.forEach(p => {
-                    provSelect.options.add(new Option(p.nomb, p.id));
-                });
-            }
-        }
-
-        function filtrarCascada(tipoFiltro) {
-            const pVal = document.getElementById('filtro-provincia').value;
-
-            if (tipoFiltro === 'provincia') {
-                rebuildSelect('filtro-distrito');
-                rebuildSelect('filtro-corregimiento');
-                rebuildSelect('filtro-poblado');
-
-                if (pVal && cacheDatos['distritos']) {
-                    const distSelect = document.getElementById('filtro-distrito');
-                    const filtrados = cacheDatos['distritos'].filter(r => r.PROV_ID === pVal);
-                    let unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.DIST_ID, nomb: r.DIST_NOMB})))].map(s => JSON.parse(s));
-                    unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
-                    unicos.forEach(d => {
-                        distSelect.options.add(new Option(`${d.id} - ${d.nomb}`, d.id));
-                    });
-                }
-            } 
-            else if (tipoFiltro === 'distrito') {
-                rebuildSelect('filtro-corregimiento');
-                rebuildSelect('filtro-poblado');
-                const dVal = document.getElementById('filtro-distrito').value;
-
-                if (pVal && dVal && cacheDatos['corregimientos']) {
-                    const corrSelect = document.getElementById('filtro-corregimiento');
-                    const filtrados = cacheDatos['corregimientos'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal);
-                    let unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.CORR_ID, nomb: r.CORR_NOMB})))].map(s => JSON.parse(s));
-                    unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
-                    unicos.forEach(c => {
-                        corrSelect.options.add(new Option(`${c.id} - ${c.nomb}`, c.id));
-                    });
-                }
-            }
-            else if (tipoFiltro === 'corregimiento') {
-                rebuildSelect('filtro-poblado');
-                const dVal = document.getElementById('filtro-distrito').value;
-                const cVal = document.getElementById('filtro-corregimiento').value;
-
-                if (pVal && dVal && cVal && cacheDatos['poblados']) {
-                    const lupoSelect = document.getElementById('filtro-poblado');
-                    const filtrados = cacheDatos['poblados'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal && r.CORR_ID === cVal);
-                    let unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.LUPO_ID, nomb: r.LUPO_NOMB})))].map(s => JSON.parse(s));
-                    unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
-                    unicos.forEach(l => {
-                        lupoSelect.options.add(new Option(`${l.id} - ${l.nomb}`, l.id));
-                    });
-                }
-            }
-
-            const nivelesAsegurar = ['distritos', 'corregimientos', 'poblados'];
-            nivelesAsegurar.forEach(n => {
-                if(!cacheDatos[n]) {
-                    Papa.parse(csvPaths[n], {
-                        download: true, header: true, skipEmptyLines: true,
-                        complete: (res) => { cacheDatos[n] = res.data; actualizarSelectoresFiltros(); }
-                    });
-                }
-            });
-
-            aplicarFiltrosYRenderizar();
-        }
-
-        function rebuildSelect(id) {
-            const sel = document.getElementById(id);
-            if (sel) sel.innerHTML = '<option value="">Todos</option>';
-        }
-
         // ===== ORDENAR TABLA =====
         function ordenarTabla(campo) {
             ordenAscendente = !ordenAscendente;
@@ -1021,19 +1130,34 @@
 
         // ===== LIMPIAR FILTROS =====
         function limpiarFiltros() {
-            document.getElementById('filtro-provincia').value = "";
-            rebuildSelect('filtro-distrito');
-            rebuildSelect('filtro-corregimiento');
-            rebuildSelect('filtro-poblado');
+            // Resetear todos los combos
+            document.getElementById('sel-provincia').value = "";
+            resetSelect('sel-distrito', '— Todos los distritos —');
+            resetSelect('sel-corregimiento', '— Todos los corregimientos —');
+            resetSelect('sel-poblado', '— Todos los poblados —');
+            resetSelect('sel-barrio', '— Todos los barrios —');
+
+            // Ocultar niveles inferiores
+            ocultarCascada('cascada-dist');
+            ocultarCascada('cascada-corr');
+            ocultarCascada('cascada-lupo');
+            ocultarCascada('cascada-barr');
+            document.getElementById('leyenda-poblados').style.display = 'none';
+
+            // Limpiar buscador
             document.getElementById('search-input').value = "";
+
+            // Volver a mostrar provincias
+            mostrarNivelEnTabla('provincia');
             aplicarFiltrosYRenderizar();
+            
             cerrarMenuSiMovil();
         }
 
         // ===== EXPORTAR CSV =====
         function exportarCSV() {
             if(datosFiltrados.length === 0) return;
-            const campos = estructurasDeCampos[nivelActivo];
+            const campos = estructurasDeCampos[nivelTablaActivo];
             const csvContent = Papa.unparse({
                 fields: campos,
                 data: datosFiltrados
@@ -1042,11 +1166,22 @@
             const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", `exportacion_${nivelActivo}_panama.csv`);
+            link.setAttribute("download", `exportacion_${nivelTablaActivo}_panama.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
+
+        // ===== MARCAR SELECTS CON VALOR =====
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('cascada-select')) {
+                if (e.target.value) {
+                    e.target.classList.add('filled');
+                } else {
+                    e.target.classList.remove('filled');
+                }
+            }
+        });
     </script>
 </body>
 </html>
