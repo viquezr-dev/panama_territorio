@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Visualizador Geográfico de Panamá - Móvil</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f0f4e8 0%, #ffe6e6 100%);
+            color: #4a4a4a;
+            font-size: 14px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== HEADER MÓVIL ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.95);
+            padding: 12px 16px;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-placeholder {
+            width: 40px;
+            height: 40px;
+            background: #6b5b95;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-text strong {
+            font-size: 14px;
+            color: #6b5b95;
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            font-size: 10px;
+            color: #7a7a7a;
+        }
+
+        /* ===== BOTÓN HAMBURGUESA ===== */
+        .hamburger-btn {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 44px;
+            height: 44px;
+            background: #6b5b95;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            padding: 10px;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .hamburger-btn:active {
+            background: #55487a;
+        }
+
+        .hamburger-btn span {
+            display: block;
+            width: 22px;
+            height: 2.5px;
+            background: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+
+        /* Animación a X */
+        .hamburger-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger-btn.active span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+        .hamburger-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* ===== MENÚ LATERAL DESLIZANTE ===== */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 340px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+            z-index: 200;
+            transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            border-radius: 20px 0 0 20px;
+        }
+
+        .side-menu.open {
+            right: 0;
+        }
+
+        .side-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: #6b5b95;
+            color: white;
+            border-radius: 20px 0 0 0;
+            flex-shrink: 0;
+        }
+
+        .side-menu-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .close-menu-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-menu-btn:active {
+            background: rgba(255,255,255,0.35);
+        }
+
+        .side-menu-body {
+            padding: 16px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* ===== OVERLAY ===== */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 150;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ===== CONTENEDOR PRINCIPAL ===== */
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            padding: 16px;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            min-height: calc(100vh - 80px);
+        }
+
+        h1 {
+            color: #6b5b95;
+            text-align: center;
+            border-bottom: 3px solid #f7c1c1;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .descripcion-box {
+            background: #fff7e6;
+            border: 1px solid #ffe0b5;
+            border-radius: 14px;
+            padding: 12px 15px;
+            margin: 12px 0;
+            font-size: 12px;
+            color: #b46f3a;
+            line-height: 1.5;
+        }
+
+        #leyenda-poblados {
+            background: #e0f2fe !important;
+            border: 1px solid #bae6fd !important;
+            color: #0369a1 !important;
+        }
+
+        #leyenda-poblados span {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* ===== BOTONES DE NIVEL ===== */
+        .nivel-section {
+            margin-bottom: 12px;
+        }
+
+        .selector-nivel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .btn-nivel {
+            padding: 12px 8px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 2px solid #bae6fd;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn-nivel.active {
+            background: #6b5b95;
+            color: white;
+            border-color: #6b5b95;
+        }
+
+        .btn-nivel:active {
+            transform: scale(0.97);
+        }
+
+        /* Último botón ocupa todo el ancho */
+        .btn-nivel:last-child:nth-child(odd) {
+            grid-column: 1 / -1;
+        }
+
+        /* ===== FILTROS ===== */
+        .filtros-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .filtro-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 14px;
+            border: 1px solid #f0cfb0;
+        }
+
+        .filtro-item label {
+            font-weight: 600;
+            color: #9b7b5c;
+            font-size: 11px;
+            white-space: nowrap;
+            min-width: 75px;
+        }
+
+        .filtro-select {
+            padding: 8px 10px;
+            border: 1px solid #f0cfb0;
+            border-radius: 10px;
+            font-size: 12px;
+            background: white;
+            flex: 1;
+            outline: none;
+            min-width: 0;
+        }
+
+        .filtro-select:focus {
+            border-color: #6b5b95;
+        }
+
+        /* ===== CONTROLES GLOBALES ===== */
+        .controles-globales {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-global {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-limpiar {
+            background: #ffd3b6;
+            color: #a5673f;
+        }
+
+        .btn-limpiar:active { background: #ffc4a0; }
+
+        .btn-exportar {
+            background: #b5e3ff;
+            color: #2c6b8f;
+        }
+
+        .btn-exportar:active { background: #9ad6ff; }
+
+        /* ===== BUSCADOR ===== */
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+            border: 1px solid #f0cfb0;
+            border-radius: 30px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #6b5b95;
+            box-shadow: 0 0 0 3px rgba(107, 91, 149, 0.2);
+        }
+
+        /* ===== TABLA RESPONSIVE ===== */
+        .table-wrapper {
+            max-height: 55vh;
+            overflow-y: auto;
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid #f0e5dd;
+            margin: 12px 0;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            text-align: left;
+            min-width: 500px;
+        }
+
+        th, td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #f0e5dd;
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: #c7e9fb;
+            color: #4a5b6e;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+            font-weight: 600;
+            user-select: none;
+            font-size: 10px;
+            z-index: 10;
+        }
+
+        th:active {
+            background-color: #b8dff5;
+        }
+
+        tr:nth-child(even) { background-color: #fefaf7; }
+        tr:active { background-color: #fff3e8; }
+
+        /* ===== INFO Y ESTADOS ===== */
+        .resultados-info {
+            text-align: center;
+            margin: 10px 0;
+            font-weight: 600;
+            color: #8b6b4d;
+            font-size: 12px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+            color: #6b5b95;
+        }
+
+        /* ===== CRÉDITOS EN MENÚ ===== */
+        .menu-credits {
+            padding: 16px;
+            border-top: 1px solid #f0e5dd;
+            font-size: 11px;
+            color: #7a7a7a;
+            text-align: center;
+            background: #faf8f6;
+            border-radius: 0 0 0 20px;
+            flex-shrink: 0;
+        }
+
+        .menu-credits a {
+            color: #6b5b95;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .visitor-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #f0f2f5;
+            border-radius: 20px;
+            border: 1px solid #e0e2e6;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b5b95;
+            margin-top: 8px;
+        }
+
+        .visitor-count {
+            color: #6b5b95;
+            font-weight: 700;
+        }
+
+        /* ===== SECCIONES DEL MENÚ ===== */
+        .menu-section {
+            margin-bottom: 20px;
+        }
+
+        .menu-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #6b5b95;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #f7c1c1;
+        }
+
+        /* ===== SCROLLBAR PERSONALIZADO ===== */
+        .table-wrapper::-webkit-scrollbar,
+        .side-menu-body::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track,
+        .side-menu-body::-webkit-scrollbar-track {
+            background: #f0e5dd;
+            border-radius: 3px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb,
+        .side-menu-body::-webkit-scrollbar-thumb {
+            background: #c7b8a8;
+            border-radius: 3px;
+        }
+
+        /* ===== RESPONSIVE AJUSTES ===== */
+        @media (min-width: 600px) {
+            .selector-nivel {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .btn-nivel:last-child:nth-child(odd) {
+                grid-column: auto;
+            }
+            .filtros-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .filtro-item {
+                flex: 1;
+                min-width: 200px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 95%;
+                border-radius: 24px;
+                margin: 20px auto;
+                padding: 25px;
+            }
+            .selector-nivel {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        /* Ocultar header original en móvil */
+        .desktop-credits {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .desktop-credits {
+                display: flex;
+            }
+            .hamburger-btn {
+                display: none;
+            }
+            .side-menu {
+                display: none;
+            }
+            .menu-overlay {
+                display: none;
+            }
+            .header {
+                border-radius: 20px;
+                padding: 15px 25px;
+                margin-bottom: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER MÓVIL CON HAMBURGUESA ===== -->
+    <div class="header">
+        <div class="logo-section">
+            <div class="logo-placeholder">PA</div>
+            <div class="logo-text">
+                <strong>PANAMÁ</strong>
+                <span>Estructura Territorial</span>
+            </div>
+        </div>
+        <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" aria-label="Abrir menú">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+
+    <!-- ===== OVERLAY ===== -->
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+
+    <!-- ===== MENÚ LATERAL ===== -->
+    <div class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+            <h3>⚙️ Opciones</h3>
+            <button class="close-menu-btn" onclick="toggleMenu()" aria-label="Cerrar menú">✕</button>
+        </div>
+        <div class="side-menu-body">
+            <!-- Niveles -->
+            <div class="menu-section">
+                <div class="menu-section-title">📊 Nivel Territorial</div>
+                <div class="selector-nivel" id="selectorNivelMenu">
+                    <button class="btn-nivel active" data-nivel="provincia" onclick="cambiarNivel('provincia')">Provincias</button>
+                    <button class="btn-nivel" data-nivel="distritos" onclick="cambiarNivel('distritos')">Distritos</button>
+                    <button class="btn-nivel" data-nivel="corregimientos" onclick="cambiarNivel('corregimientos')">Corregimientos</button>
+                    <button class="btn-nivel" data-nivel="poblados" onclick="cambiarNivel('poblados')">Poblados</button>
+                    <button class="btn-nivel" data-nivel="barrios" onclick="cambiarNivel('barrios')">Barrios</button>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="menu-section">
+                <div class="menu-section-title">🔍 Filtros</div>
+                <div class="filtros-container">
+                    <div class="filtro-item" id="div-filtro-prov" style="display:none;">
+                        <label>Provincia:</label>
+                        <select id="filtro-provincia" class="filtro-select" onchange="filtrarCascada('provincia')">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+                    <div class="filtro-item" id="div-filtro-dist" style="display:none;">
+                        <label>Distrito:</label>
+                        <select id="filtro-distrito" class="filtro-select" onchange="filtrarCascada('distrito')">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                    <div class="filtro-item" id="div-filtro-corr" style="display:none;">
+                        <label>Corregimiento:</label>
+                        <select id="filtro-corregimiento" class="filtro-select" onchange="filtrarCascada('corregimiento')">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                    <div class="filtro-item" id="div-filtro-lupo" style="display:none;">
+                        <label>Poblado (LUPO):</label>
+                        <select id="filtro-poblado" class="filtro-select" onchange="filtrarCascada('poblado')">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="menu-section">
+                <div class="menu-section-title">🛠️ Acciones</div>
+                <div class="controles-globales" style="flex-direction: column;">
+                    <button class="btn-global btn-limpiar" onclick="limpiarFiltros()">🧹 Limpiar Filtros</button>
+                    <button class="btn-global btn-exportar" onclick="exportarCSV()">📥 Exportar CSV</button>
+                </div>
+            </div>
+
+            <!-- Créditos -->
+            <div class="menu-credits">
+                <div>Desarrollado por: <a href="#">Raúl Víquez</a></div>
+                <div class="visitor-badge">
+                    👁️ Visitas: <span class="visitor-count" id="visit-count">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CONTENIDO PRINCIPAL ===== -->
+    <div class="container">
+        <h1>Explorador Territorial</h1>
+
+        <div class="descripcion-box" id="descripcion-general">
+            Secciona el nivel territorial requerido. Las opciones de filtrado se actualizarán en cascada.
+        </div>
+
+        <div id="leyenda-poblados" class="descripcion-box" style="display: none;">
+            <strong>📋 Patrón para Poblados:</strong><br>
+            <span><strong>🔹 LUPO_CLASE:</strong> 1-CABECERA, 2-POBLADO COMPLETO, 3-POBLADO PARTE, 4-CABECERA PARTE</span>
+            <span><strong>🔍 LUPO_TIPO:</strong> 1-URBANO, 2-RURAL, 3-INDIGENA</span>
+            <span><strong>🔍 LUPO_CATE:</strong> 1-POBLADO, 2-SITIO</span>
+        </div>
+
+        <input type="text" id="search-input" class="search-box" placeholder="🔎 Buscar por nombre o código..." oninput="filtrarTabla()">
+
+        <div class="resultados-info" id="contador-registros">
+            Cargando datos...
+        </div>
+
+        <div class="table-wrapper">
+            <table id="tabla-datos">
+                <thead id="tabla-head"></thead>
+                <tbody id="tabla-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURACIÓN =====
+        const csvPaths = {
+            provincia: './data/provincias.csv',
+            distritos: './data/distritos.csv',
+            corregimientos: './data/corregimientos.csv',
+            poblados: './data/poblados.csv',
+            barrios: './data/barrios.csv'
+        };
+
+        const estructurasDeCampos = {
+            provincia: ['PROV_ID', 'PROV_NOMB'],
+            distritos: ['PROV_ID', 'DIST_ID', 'DIST_NOMB', 'DIST_CODE'],
+            corregimientos: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'CODIGO', 'CORR_NOMB', 'CORR_LEY', 'CORR_CATE', 'DESCRIP_ON'],
+            poblados: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'CODIGO', 'LUPO_NOMB', 'LUPO_CLASE', 'DESCRIP_ON', 'LUPO_CATE', 'LUPO_TIPO'],
+            barrios: ['PROV_ID', 'DIST_ID', 'CORR_ID', 'LUPO_ID', 'BARR_ID', 'CODIGO', 'BARR_NOMB', 'BARR_CLASE', 'DESCRIP_ON']
+        };
+
+        let cacheDatos = {};
+        let nivelActivo = 'provincia';
+        let datosFiltrados = [];
+        let ordenAscendente = true;
+
+        // ===== MENÚ HAMBURGUESA =====
+        function toggleMenu() {
+            const menu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('menuOverlay');
+            const btn = document.getElementById('hamburgerBtn');
+            
+            menu.classList.toggle('open');
+            overlay.classList.toggle('active');
+            btn.classList.toggle('active');
+            
+            // Bloquear scroll del body cuando el menú está abierto
+            if (menu.classList.contains('open')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Cerrar menú al seleccionar una opción en móvil
+        function cerrarMenuSiMovil() {
+            if (window.innerWidth < 768) {
+                const menu = document.getElementById('sideMenu');
+                if (menu.classList.contains('open')) {
+                    toggleMenu();
+                }
+            }
+        }
+
+        // ===== INICIALIZACIÓN =====
+        window.addEventListener('DOMContentLoaded', () => {
+            inicializarContadorVisitas();
+            cargarNivelTerritorial(nivelActivo);
+        });
+
+        // ===== CONTADOR DE VISITAS =====
+        function inicializarContadorVisitas() {
+            const el = document.getElementById('visit-count');
+            if (!el) return;
+            
+            fetch(`https://api.staticcounter.com/v3/staticcounter?user=d1c14f6f37f6402b&key=panama_visor&format=json`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.counter && data.counter.count) {
+                        el.innerText = Number(data.counter.count).toLocaleString('es-PA');
+                    } else {
+                        throw new Error("Respuesta inválida");
+                    }
+                })
+                .catch(err => {
+                    console.warn("StaticCounter falló, usando localStorage:", err);
+                    let visits = localStorage.getItem('panama_visits') || 1;
+                    visits = parseInt(visits) + 1;
+                    localStorage.setItem('panama_visits', visits);
+                    el.innerText = visits.toLocaleString('es-PA');
+                });
+        }
+
+        // ===== CARGA DE DATOS =====
+        function cargarNivelTerritorial(nivel) {
+            document.getElementById('contador-registros').innerText = "Cargando datos...";
+            
+            if (cacheDatos[nivel]) {
+                procesarYMostrar(nivel);
+                return;
+            }
+
+            Papa.parse(csvPaths[nivel], {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    cacheDatos[nivel] = results.data;
+                    procesarYMostrar(nivel);
+                    actualizarSelectoresFiltros();
+                },
+                error: function(err) {
+                    document.getElementById('contador-registros').innerText = "Error al cargar: " + nivel;
+                    console.error(err);
+                }
+            });
+        }
+
+        function procesarYMostrar(nivel) {
+            datosFiltrados = [...cacheDatos[nivel]];
+            
+            if (nivel === 'provincia') {
+                datosFiltrados.sort((a, b) => {
+                    let idA = String(a.PROV_ID || '').trim();
+                    let idB = String(b.PROV_ID || '').trim();
+                    return idA.localeCompare(idB, undefined, { numeric: true });
+                });
+            }
+        
+            generarCabecera(nivel);
+            aplicarFiltrosYRenderizar();
+        }
+
+        function generarCabecera(nivel) {
+            const head = document.getElementById('tabla-head');
+            const campos = estructurasDeCampos[nivel];
+            let html = '<tr>';
+            campos.forEach((campo) => {
+                html += `<th onclick="ordenarTabla('${campo}')">${campo}</th>`;
+            });
+            html += '</tr>';
+            head.innerHTML = html;
+        }
+
+        // ===== CAMBIO DE NIVEL =====
+        function cambiarNivel(nuevoNivel) {
+            nivelActivo = nuevoNivel;
+            
+            // Actualizar botones activos en el menú
+            document.querySelectorAll('.btn-nivel').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.nivel === nuevoNivel) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Mostrar/Ocultar filtros
+            document.getElementById('div-filtro-prov').style.display = nuevoNivel !== 'provincia' ? 'flex' : 'none';
+            document.getElementById('div-filtro-dist').style.display = ['corregimientos', 'poblados', 'barrios'].includes(nuevoNivel) ? 'flex' : 'none';
+            document.getElementById('div-filtro-corr').style.display = ['poblados', 'barrios'].includes(nuevoNivel) ? 'flex' : 'none';
+            document.getElementById('div-filtro-lupo').style.display = nuevoNivel === 'barrios' ? 'flex' : 'none';
+            document.getElementById('leyenda-poblados').style.display = nuevoNivel === 'poblados' ? 'block' : 'none';
+            
+            cargarNivelTerritorial(nuevoNivel);
+            cerrarMenuSiMovil();
+        }
+
+        // ===== FILTRADO =====
+        function aplicarFiltrosYRenderizar() {
+            let baseDatos = cacheDatos[nivelActivo] ? [...cacheDatos[nivelActivo]] : [];
+
+            const pVal = document.getElementById('filtro-provincia').value;
+            const dVal = document.getElementById('filtro-distrito').value;
+            const cVal = document.getElementById('filtro-corregimiento').value;
+            const lVal = document.getElementById('filtro-poblado').value;
+
+            // Filtrado jerárquico
+            if (pVal && nivelActivo !== 'provincia') {
+                baseDatos = baseDatos.filter(r => r.PROV_ID === pVal);
+            }
+            if (dVal && ['distritos', 'corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
+                baseDatos = baseDatos.filter(r => r.DIST_ID === dVal);
+            }
+            if (cVal && ['corregimientos', 'poblados', 'barrios'].includes(nivelActivo)) {
+                baseDatos = baseDatos.filter(r => r.CORR_ID === cVal);
+            }
+            if (lVal && ['poblados', 'barrios'].includes(nivelActivo)) {
+                baseDatos = baseDatos.filter(r => r.LUPO_ID === lVal);
+            }
+
+            // Búsqueda
+            const busqueda = document.getElementById('search-input').value.toLowerCase().trim();
+            if (busqueda !== "") {
+                const campos = estructurasDeCampos[nivelActivo];
+                baseDatos = baseDatos.filter(fila => {
+                    return campos.some(campo => String(fila[campo] || '').toLowerCase().includes(busqueda));
+                });
+            }
+
+            // Ordenar por ID
+            baseDatos.sort((a, b) => {
+                let idA = '', idB = '';
+                if (nivelActivo === 'provincia') { idA = a.PROV_ID; idB = b.PROV_ID; }
+                else if (nivelActivo === 'distritos') { idA = a.DIST_ID; idB = b.DIST_ID; }
+                else if (nivelActivo === 'corregimientos') { idA = a.CORR_ID; idB = b.CORR_ID; }
+                else if (nivelActivo === 'poblados') { idA = a.LUPO_ID; idB = b.LUPO_ID; }
+                else if (nivelActivo === 'barrios') { idA = a.BARR_ID; idB = b.BARR_ID; }
+                
+                idA = String(idA || '').trim();
+                idB = String(idB || '').trim();
+                return idA.localeCompare(idB, undefined, { numeric: true });
+            });
+
+            datosFiltrados = baseDatos;
+            renderizarTabla();
+        }
+
+        function renderizarTabla() {
+            const tbody = document.getElementById('tabla-body');
+            const campos = estructurasDeCampos[nivelActivo];
+            
+            if (datosFiltrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${campos.length}" style="text-align:center; padding:30px; color:#999;">No se encontraron registros.</td></tr>`;
+                document.getElementById('contador-registros').innerText = "Mostrando 0 registros";
+                return;
+            }
+
+            let html = '';
+            datosFiltrados.forEach(fila => {
+                html += '<tr>';
+                campos.forEach(campo => {
+                    html += `<td>${fila[campo] || ''}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            tbody.innerHTML = html;
+            document.getElementById('contador-registros').innerText = `Mostrando ${datosFiltrados.length} registros`;
+        }
+
+        function filtrarTabla() {
+            aplicarFiltrosYRenderizar();
+        }
+
+        // ===== SELECTORES EN CASCADA =====
+        function actualizarSelectoresFiltros() {
+            const provSelect = document.getElementById('filtro-provincia');
+            if (!provSelect) return;
+            if (provSelect.options.length > 1) return;
+
+            if (cacheDatos['provincia']) {
+                const provs = [...new Set(cacheDatos['provincia']
+                    .filter(r => r.PROV_ID && r.PROV_NOMB)
+                    .map(r => JSON.stringify({
+                        id: String(r.PROV_ID).trim(),
+                        nomb: String(r.PROV_NOMB).trim()
+                    }))
+                )].map(s => JSON.parse(s));
+
+                provs.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' }));
+
+                provs.forEach(p => {
+                    provSelect.options.add(new Option(p.nomb, p.id));
+                });
+            }
+        }
+
+        function filtrarCascada(tipoFiltro) {
+            const pVal = document.getElementById('filtro-provincia').value;
+
+            if (tipoFiltro === 'provincia') {
+                rebuildSelect('filtro-distrito');
+                rebuildSelect('filtro-corregimiento');
+                rebuildSelect('filtro-poblado');
+
+                if (pVal && cacheDatos['distritos']) {
+                    const distSelect = document.getElementById('filtro-distrito');
+                    const filtrados = cacheDatos['distritos'].filter(r => r.PROV_ID === pVal);
+                    let unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.DIST_ID, nomb: r.DIST_NOMB})))].map(s => JSON.parse(s));
+                    unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+                    unicos.forEach(d => {
+                        distSelect.options.add(new Option(`${d.id} - ${d.nomb}`, d.id));
+                    });
+                }
+            } 
+            else if (tipoFiltro === 'distrito') {
+                rebuildSelect('filtro-corregimiento');
+                rebuildSelect('filtro-poblado');
+                const dVal = document.getElementById('filtro-distrito').value;
+
+                if (pVal && dVal && cacheDatos['corregimientos']) {
+                    const corrSelect = document.getElementById('filtro-corregimiento');
+                    const filtrados = cacheDatos['corregimientos'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal);
+                    let unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.CORR_ID, nomb: r.CORR_NOMB})))].map(s => JSON.parse(s));
+                    unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+                    unicos.forEach(c => {
+                        corrSelect.options.add(new Option(`${c.id} - ${c.nomb}`, c.id));
+                    });
+                }
+            }
+            else if (tipoFiltro === 'corregimiento') {
+                rebuildSelect('filtro-poblado');
+                const dVal = document.getElementById('filtro-distrito').value;
+                const cVal = document.getElementById('filtro-corregimiento').value;
+
+                if (pVal && dVal && cVal && cacheDatos['poblados']) {
+                    const lupoSelect = document.getElementById('filtro-poblado');
+                    const filtrados = cacheDatos['poblados'].filter(r => r.PROV_ID === pVal && r.DIST_ID === dVal && r.CORR_ID === cVal);
+                    let unicos = [...new Set(filtrados.map(r => JSON.stringify({id: r.LUPO_ID, nomb: r.LUPO_NOMB})))].map(s => JSON.parse(s));
+                    unicos.sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+                    unicos.forEach(l => {
+                        lupoSelect.options.add(new Option(`${l.id} - ${l.nomb}`, l.id));
+                    });
+                }
+            }
+
+            const nivelesAsegurar = ['distritos', 'corregimientos', 'poblados'];
+            nivelesAsegurar.forEach(n => {
+                if(!cacheDatos[n]) {
+                    Papa.parse(csvPaths[n], {
+                        download: true, header: true, skipEmptyLines: true,
+                        complete: (res) => { cacheDatos[n] = res.data; actualizarSelectoresFiltros(); }
+                    });
+                }
+            });
+
+            aplicarFiltrosYRenderizar();
+        }
+
+        function rebuildSelect(id) {
+            const sel = document.getElementById(id);
+            if (sel) sel.innerHTML = '<option value="">Todos</option>';
+        }
+
+        // ===== ORDENAR TABLA =====
+        function ordenarTabla(campo) {
+            ordenAscendente = !ordenAscendente;
+            datosFiltrados.sort((a, b) => {
+                let valA = String(a[campo] || '').toLowerCase();
+                let valB = String(b[campo] || '').toLowerCase();
+                
+                if (!isNaN(valA) && !isNaN(valB) && valA !== '' && valB !== '') {
+                    return ordenAscendente ? valA - valB : valB - valA;
+                }
+                return ordenAscendente ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            });
+            renderizarTabla();
+        }
+
+        // ===== LIMPIAR FILTROS =====
+        function limpiarFiltros() {
+            document.getElementById('filtro-provincia').value = "";
+            rebuildSelect('filtro-distrito');
+            rebuildSelect('filtro-corregimiento');
+            rebuildSelect('filtro-poblado');
+            document.getElementById('search-input').value = "";
+            aplicarFiltrosYRenderizar();
+            cerrarMenuSiMovil();
+        }
+
+        // ===== EXPORTAR CSV =====
+        function exportarCSV() {
+            if(datosFiltrados.length === 0) return;
+            const campos = estructurasDeCampos[nivelActivo];
+            const csvContent = Papa.unparse({
+                fields: campos,
+                data: datosFiltrados
+            });
+            
+            const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", `exportacion_${nivelActivo}_panama.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
